@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class CheckoutVoucher extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'voucher_number',
+        'checkout_date',
+        'operator_id',
+        'total_boxes',
+        'remarks',
+        'created_by',
+    ];
+
+    public function operator()
+    {
+        return $this->belongsTo(Operator::class, 'operator_id');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function items()
+    {
+        return $this->hasMany(CheckoutVoucherItem::class, 'checkout_voucher_id');
+    }
+}

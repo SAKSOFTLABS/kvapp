@@ -1,0 +1,578 @@
+/* Kerala Vision Enterprise Design System */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Color Palette - Light Mode */
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-surface: #f1f5f9;
+  --bg-glass: rgba(255, 255, 255, 0.9);
+
+  --border-color: #e2e8f0;
+  --border-focus: #3b82f6;
+
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --text-light: #94a3b8;
+
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: #eff6ff;
+  --primary-glow: rgba(37, 99, 235, 0.15);
+
+  --accent: #10b981;
+  --accent-hover: #059669;
+  --accent-light: #ecfdf5;
+  --accent-glow: rgba(16, 185, 129, 0.15);
+
+  --warning: #f59e0b;
+  --warning-light: #fffbeb;
+  --danger: #ef4444;
+  --danger-light: #fef2f2;
+  --info: #06b6d4;
+
+  --sidebar-width: 260px;
+  --header-height: 70px;
+
+  --card-radius: 16px;
+  --button-radius: 10px;
+  --input-radius: 10px;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.07), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+
+  --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark Mode Theme Overrides */
+[data-theme="dark"] {
+  --bg-primary: #090d16;
+  --bg-secondary: #111827;
+  --bg-surface: #1f2937;
+  --bg-glass: rgba(17, 24, 39, 0.9);
+
+  --border-color: #374151;
+  --border-focus: #60a5fa;
+
+  --text-main: #f9fafb;
+  --text-muted: #9ca3af;
+  --text-light: #6b7280;
+
+  --primary-light: rgba(37, 99, 235, 0.2);
+  --accent-light: rgba(16, 185, 129, 0.2);
+  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+/* Global Reset & Base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  line-height: 1.5;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Layout Architecture */
+.app-wrapper {
+  display: flex;
+  min-height: 100vh;
+  width: 100vw;
+}
+
+/* Sidebar Backdrop for Mobile */
+.sidebar-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 1035;
+  opacity: 0;
+  visibility: hidden;
+  transition: var(--transition);
+}
+
+.sidebar-backdrop.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Sidebar Styling */
+.app-sidebar {
+  width: var(--sidebar-width);
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border-color);
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1040;
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+}
+
+.sidebar-header {
+  height: var(--header-height);
+  padding: 0 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.brand-logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.25rem;
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+.brand-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+}
+
+.brand-subtitle {
+  font-size: 0.72rem;
+  color: var(--accent);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sidebar-menu {
+  flex: 1;
+  padding: 1.25rem 1rem;
+  overflow-y: auto;
+}
+
+.menu-category {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-light);
+  letter-spacing: 0.08em;
+  margin: 1.25rem 0 0.5rem 0.75rem;
+}
+
+.menu-category:first-child {
+  margin-top: 0;
+}
+
+.nav-link-custom {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.92rem;
+  border-radius: 10px;
+  transition: var(--transition);
+  margin-bottom: 0.2rem;
+}
+
+.nav-link-custom i {
+  font-size: 1.15rem;
+  transition: var(--transition);
+}
+
+.nav-link-custom:hover {
+  color: var(--primary);
+  background-color: var(--primary-light);
+  transform: translateX(3px);
+}
+
+.nav-link-custom.active {
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--primary), #1d4ed8);
+  font-weight: 600;
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+.nav-link-custom.active i {
+  color: #ffffff;
+}
+
+/* Header Navbar Styling */
+.app-header {
+  height: var(--header-height);
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: var(--sidebar-width);
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 1030;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  transition: var(--transition);
+}
+
+.main-content {
+  margin-left: var(--sidebar-width);
+  margin-top: var(--header-height);
+  padding: 2rem;
+  min-height: calc(100vh - var(--header-height));
+  width: calc(100vw - var(--sidebar-width));
+  transition: var(--transition);
+}
+
+/* Search Bar trigger */
+.global-search-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  cursor: pointer;
+  width: 320px;
+  transition: var(--transition);
+}
+
+.global-search-trigger:hover {
+  border-color: var(--primary);
+  background: var(--bg-secondary);
+}
+
+.kbd-shortcut {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  margin-left: auto;
+  color: var(--text-light);
+}
+
+/* Glassmorphism Cards */
+.kv-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--card-radius);
+  box-shadow: var(--shadow-sm);
+  padding: 1.5rem;
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+
+.kv-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Dashboard Metric Cards */
+.metric-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.metric-icon-box {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.metric-icon-blue {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.metric-icon-emerald {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.metric-value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.metric-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* Custom Table Styles */
+.kv-table-wrapper {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.kv-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 0;
+}
+
+.kv-table th {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.9rem 1.2rem;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.kv-table td {
+  padding: 1rem 1.2rem;
+  color: var(--text-main);
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+  transition: var(--transition);
+}
+
+/* Badges */
+.kv-badge {
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.kv-badge-active {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.kv-badge-inactive {
+  background: var(--danger-light);
+  color: var(--danger);
+}
+
+/* Action Buttons */
+.btn-kv-primary {
+  background: linear-gradient(135deg, var(--primary), #1d4ed8);
+  color: #ffffff;
+  font-weight: 600;
+  border-radius: var(--button-radius);
+  padding: 0.55rem 1.25rem;
+  border: none;
+  box-shadow: 0 4px 12px var(--primary-glow);
+  transition: var(--transition);
+}
+
+.btn-kv-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px var(--primary-glow);
+  color: #fff;
+}
+
+.btn-kv-accent {
+  background: linear-gradient(135deg, var(--accent), #059669);
+  color: #ffffff;
+  font-weight: 600;
+  border-radius: var(--button-radius);
+  padding: 0.55rem 1.25rem;
+  border: none;
+  box-shadow: 0 4px 12px var(--accent-glow);
+  transition: var(--transition);
+}
+
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  transition: var(--transition);
+}
+
+/* Form Controls */
+.form-control-kv, .form-select-kv {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--input-radius);
+  color: var(--text-main);
+  padding: 0.65rem 1rem;
+  font-size: 0.92rem;
+  transition: var(--transition);
+}
+
+.form-control-kv:focus, .form-select-kv:focus {
+  background-color: var(--bg-secondary);
+  border-color: var(--border-focus);
+  color: var(--text-main);
+  box-shadow: 0 0 0 4px var(--primary-glow);
+}
+
+/* Mobile App Bottom Navigation Bar */
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border-color);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 0.5rem;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.72rem;
+  font-weight: 600;
+  flex: 1;
+  padding: 0.4rem 0;
+  border-radius: 8px;
+  transition: var(--transition);
+}
+
+.mobile-nav-item i {
+  font-size: 1.3rem;
+  margin-bottom: 2px;
+  transition: var(--transition);
+}
+
+.mobile-nav-item.active {
+  color: var(--primary);
+}
+
+.mobile-nav-item.active i {
+  color: var(--primary);
+  transform: translateY(-2px);
+}
+
+.mobile-nav-item-accent {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: #fff !important;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  flex: initial;
+  box-shadow: 0 4px 14px var(--primary-glow);
+  transform: translateY(-10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-nav-item-accent i {
+  font-size: 1.45rem;
+  margin-bottom: 0;
+  color: #fff !important;
+}
+
+/* Mobile Media Queries (< 992px) */
+@media (max-width: 991.98px) {
+  .app-sidebar {
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-lg);
+    width: 280px;
+  }
+
+  .app-sidebar.show {
+    transform: translateX(0);
+  }
+
+  .app-header {
+    left: 0;
+    width: 100%;
+    padding: 0 1rem;
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 1.25rem 1rem 6rem 1rem;
+  }
+
+  .global-search-trigger {
+    width: 160px;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.78rem;
+  }
+
+  .kbd-shortcut {
+    display: none;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .app-sidebar, .app-header, .mobile-bottom-nav, .btn, .no-print {
+    display: none !important;
+  }
+  .main-content {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+}

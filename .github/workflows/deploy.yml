@@ -1,0 +1,32 @@
+name: Deploy to myslip.in
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  web-deploy:
+    name: Sync Code to myslip.in
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚚 Checkout Repository Code
+        uses: actions/checkout@v4
+
+      - name: 📂 Sync Files via FTP/SFTP Action
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: /public_html/myslip.in/kvapp/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.env
+            **/storage/logs/**
+            **/storage/framework/cache/**
+            **/storage/framework/sessions/**
+            **/storage/framework/views/**
