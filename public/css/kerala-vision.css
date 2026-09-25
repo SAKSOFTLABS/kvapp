@@ -607,6 +607,17 @@ a[aria-expanded="true"] .transition-transform {
   color: #fff !important;
 }
 
+/* Perfect Symmetrical Circle Icon Badges */
+.icon-circle {
+  width: 46px !important;
+  height: 46px !important;
+  border-radius: 50% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+}
+
 /* Mobile Media Queries (< 992px) */
 @media (max-width: 991.98px) {
   .app-sidebar {

@@ -93,7 +93,7 @@
 <div class="row g-3 mb-4">
     <div class="col-12 col-md-3">
         <div class="kv-card py-3 d-flex align-items-center gap-3">
-            <div class="rounded-circle p-3 bg-primary-subtle text-primary"><i class="bi bi-calendar-check fs-4"></i></div>
+            <div class="icon-circle bg-primary-subtle text-primary" style="width: 48px; height: 48px; min-width: 48px; min-height: 48px; border-radius: 50% !important; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="bi bi-calendar-check fs-4"></i></div>
             <div>
                 <div class="text-muted small fw-bold">TODAY'S SERVICES</div>
                 <div class="fs-4 fw-extrabold">{{ $todaysMyServices }}</div>
@@ -102,7 +102,7 @@
     </div>
     <div class="col-12 col-md-3">
         <div class="kv-card py-3 d-flex align-items-center gap-3">
-            <div class="rounded-circle p-3 bg-success-subtle text-success"><i class="bi bi-graph-up-arrow fs-4"></i></div>
+            <div class="icon-circle bg-success-subtle text-success" style="width: 48px; height: 48px; min-width: 48px; min-height: 48px; border-radius: 50% !important; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="bi bi-graph-up-arrow fs-4"></i></div>
             <div>
                 <div class="text-muted small fw-bold">THIS MONTH'S SERVICES</div>
                 <div class="fs-4 fw-extrabold">{{ $monthlyMyServices }}</div>
@@ -111,7 +111,7 @@
     </div>
     <div class="col-12 col-md-3">
         <div class="kv-card py-3 d-flex align-items-center gap-3">
-            <div class="rounded-circle p-3 bg-danger-subtle text-danger"><i class="bi bi-shield-x fs-4"></i></div>
+            <div class="icon-circle bg-danger-subtle text-danger" style="width: 48px; height: 48px; min-width: 48px; min-height: 48px; border-radius: 50% !important; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="bi bi-shield-x fs-4"></i></div>
             <div>
                 <div class="text-muted small fw-bold">QC REJECTED</div>
                 <div class="fs-4 fw-extrabold text-danger">{{ $myQcRejectedCount }} Boxes</div>
@@ -120,7 +120,7 @@
     </div>
     <div class="col-12 col-md-3">
         <div class="kv-card py-3 d-flex align-items-center gap-3">
-            <div class="rounded-circle p-3 bg-warning-subtle text-warning"><i class="bi bi-boxes fs-4"></i></div>
+            <div class="icon-circle bg-warning-subtle text-warning" style="width: 48px; height: 48px; min-width: 48px; min-height: 48px; border-radius: 50% !important; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="bi bi-boxes fs-4"></i></div>
             <div>
                 <div class="text-muted small fw-bold">LOW STOCK SPARES</div>
                 <div class="fs-4 fw-extrabold text-warning">{{ $myLowStockCount }} Items</div>
@@ -555,7 +555,7 @@
 <div class="row g-3 mb-4">
     <div class="col-12 col-md-4">
         <div class="kv-card py-3 d-flex align-items-center gap-3">
-            <div class="rounded-circle p-3 bg-primary-subtle text-primary"><i class="bi bi-calendar-check fs-4"></i></div>
+            <div class="icon-circle bg-primary-subtle text-primary" style="width: 48px; height: 48px; min-width: 48px; min-height: 48px; border-radius: 50% !important; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="bi bi-calendar-check fs-4"></i></div>
             <div>
                 <div class="text-muted small fw-bold">TODAY'S SERVICES</div>
                 <div class="fs-4 fw-extrabold">{{ $todaysServices }}</div>
@@ -564,7 +564,7 @@
     </div>
     <div class="col-12 col-md-4">
         <div class="kv-card py-3 d-flex align-items-center gap-3">
-            <div class="rounded-circle p-3 bg-success-subtle text-success"><i class="bi bi-graph-up-arrow fs-4"></i></div>
+            <div class="icon-circle bg-success-subtle text-success" style="width: 48px; height: 48px; min-width: 48px; min-height: 48px; border-radius: 50% !important; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="bi bi-graph-up-arrow fs-4"></i></div>
             <div>
                 <div class="text-muted small fw-bold">THIS MONTH'S SERVICES</div>
                 <div class="fs-4 fw-extrabold">{{ $monthlyServices }}</div>
@@ -573,7 +573,7 @@
     </div>
     <div class="col-12 col-md-4">
         <div class="kv-card py-3 d-flex align-items-center gap-3">
-            <div class="rounded-circle p-3 bg-danger-subtle text-danger"><i class="bi bi-exclamation-triangle fs-4"></i></div>
+            <div class="icon-circle bg-danger-subtle text-danger" style="width: 48px; height: 48px; min-width: 48px; min-height: 48px; border-radius: 50% !important; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;"><i class="bi bi-exclamation-triangle fs-4"></i></div>
             <div>
                 <div class="text-muted small fw-bold">LOW STOCK ALERTS</div>
                 <div class="fs-4 fw-extrabold text-danger">{{ $lowStockCount }} Items</div>
