@@ -55,6 +55,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reports/stb-box/export-csv', [StbBoxReportController::class, 'exportCsv'])->name('reports.stb-box.export');
     Route::get('/reports/detailed-service', [DetailedServiceReportController::class, 'index'])->name('reports.detailed-service');
     Route::get('/reports/detailed-service/export-csv', [DetailedServiceReportController::class, 'exportCsv'])->name('reports.detailed-service.export');
+    Route::get('/reports/detailed-service/print', [DetailedServiceReportController::class, 'printReport'])->name('reports.detailed-service.print');
 
     // STB Check-In Voucher Module (Admin, Front Office, Staff)
     Route::middleware(['role:admin,front_office,staff'])->group(function () {

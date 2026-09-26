@@ -256,4 +256,131 @@ class DetailedServiceReportController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
+
+    public function printReport(Request $request)
+    {
+        $dateFrom = $request->get('date_from', Carbon::now()->startOfMonth()->format('Y-m-d'));
+        $dateTo = $request->get('date_to', Carbon::now()->endOfMonth()->format('Y-m-d'));
+
+        $monthTitle = Carbon::parse($dateFrom)->format('M-Y');
+        if ($dateFrom !== Carbon::parse($dateFrom)->startOfMonth()->format('Y-m-d') || $dateTo !== Carbon::parse($dateTo)->endOfMonth()->format('Y-m-d')) {
+            $monthTitle = Carbon::parse($dateFrom)->format('d-m-Y') . ' to ' . Carbon::parse($dateTo)->format('d-m-Y');
+        }
+
+        $staffQuery = Staff::where('status', 'active');
+        if ($request->filled('staff_id')) {
+            $staffQuery->where('id', $request->staff_id);
+        }
+        $technicians = $staffQuery->orderBy('name')->get();
+
+        $txQuery = ServiceTransaction::with(['setTopBox.boxModel', 'technician']);
+        if ($request->filled('box_model_id')) {
+            $modelId = $request->box_model_id;
+            $txQuery->whereHas('setTopBox', function ($q) use ($modelId) {
+                $q->where('box_model_id', $modelId);
+            });
+        }
+        if ($request->filled('staff_id')) {
+            $txQuery->where('staff_id', $request->staff_id);
+        }
+
+        if ($request->filled('action_type')) {
+            $action = $request->action_type;
+            if ($action === 'repaired' || $action === 'service_done') {
+                $txQuery->where('remarks', 'not like', '[SENT TO PUD%')
+                        ->where('remarks', 'not like', '[FLASH%')
+                        ->where('remarks', 'not like', '[SOFTWARE ISSUE%');
+            } elseif ($action === 'send_to_pud') {
+                $txQuery->where(function ($q) {
+                    $q->where('remarks', 'like', '[SENT TO PUD%')
+                      ->orWhereHas('setTopBox', function ($sq) {
+                          $sq->where('stb_status', 'send_to_pud');
+                      });
+                });
+            } elseif ($action === 'flash') {
+                $txQuery->where(function ($q) {
+                    $q->where('remarks', 'like', '[FLASH%')
+                      ->orWhereHas('setTopBox', function ($sq) {
+                          $sq->where('stb_status', 'flash');
+                      });
+                });
+            } elseif ($action === 'software_issue') {
+                $txQuery->where(function ($q) {
+                    $q->where('remarks', 'like', '[SOFTWARE ISSUE%')
+                      ->orWhereHas('setTopBox', function ($sq) {
+                          $sq->where('stb_status', 'software_issue');
+                      });
+                });
+            }
+        }
+
+        $txQuery->whereDate('service_date', '>=', $dateFrom)
+                ->whereDate('service_date', '<=', $dateTo);
+
+        $services = $txQuery->orderBy('service_date', 'asc')->get();
+
+        $datesList = [];
+        $matrix = [];
+        $totals = [];
+
+        foreach ($technicians as $tech) {
+            $totals[$tech->id] = [
+                'repaired' => 0,
+                'flash' => 0,
+                'reservice' => 0,
+            ];
+        }
+
+        foreach ($services as $srv) {
+            $dStr = Carbon::parse($srv->service_date)->format('d-m-Y');
+            if (!in_array($dStr, $datesList)) {
+                $datesList[] = $dStr;
+            }
+
+            $tId = $srv->staff_id;
+            if (!isset($matrix[$dStr])) {
+                $matrix[$dStr] = [];
+            }
+            if (!isset($matrix[$dStr][$tId])) {
+                $matrix[$dStr][$tId] = ['repaired' => 0, 'flash' => 0];
+            }
+
+            $isNonRepaired = str_contains($srv->remarks ?? '', '[SENT TO PUD')
+                || str_contains($srv->remarks ?? '', '[FLASH')
+                || str_contains($srv->remarks ?? '', '[SOFTWARE ISSUE')
+                || ($srv->setTopBox && in_array($srv->setTopBox->stb_status, ['send_to_pud', 'flash', 'software_issue']));
+
+            if ($isNonRepaired) {
+                $matrix[$dStr][$tId]['flash']++;
+                if (isset($totals[$tId])) {
+                    $totals[$tId]['flash']++;
+                }
+            } else {
+                $matrix[$dStr][$tId]['repaired']++;
+                if (isset($totals[$tId])) {
+                    $totals[$tId]['repaired']++;
+                }
+            }
+
+            if ($srv->setTopBox && $srv->setTopBox->stb_status === 'reservice') {
+                if (isset($totals[$tId])) {
+                    $totals[$tId]['reservice']++;
+                }
+            }
+        }
+
+        usort($datesList, function ($a, $b) {
+            return strtotime($a) <=> strtotime($b);
+        });
+
+        return view('reports.print_detailed_service', compact(
+            'monthTitle',
+            'dateFrom',
+            'dateTo',
+            'technicians',
+            'datesList',
+            'matrix',
+            'totals'
+        ));
+    }
 }

@@ -12,9 +12,9 @@
         <a href="{{ route('reports.detailed-service.export', request()->query()) }}" class="btn btn-outline-secondary btn-sm rounded-3">
             <i class="bi bi-file-earmark-excel me-1"></i> Export Excel (CSV)
         </a>
-        <button onclick="window.print()" class="btn btn-outline-dark btn-sm rounded-3 no-print">
+        <a href="{{ route('reports.detailed-service.print', request()->query()) }}" target="_blank" class="btn btn-outline-dark btn-sm rounded-3 no-print">
             <i class="bi bi-printer me-1"></i> Print Report
-        </button>
+        </a>
     </div>
 </div>
 
