@@ -138,7 +138,6 @@
                     <th>Cable Operator</th>
                     <th>Intake / Current Status</th>
                     <th>Store / Delivery State</th>
-                    <th>Registered Date</th>
                     <th class="text-end no-print">Action</th>
                 </tr>
             </thead>
@@ -168,7 +167,6 @@
                             <span class="badge bg-primary-subtle text-primary border border-primary"><i class="bi bi-building me-1"></i> In Workshop</span>
                         @endif
                     </td>
-                    <td>{{ $row->created_at ? $row->created_at->format('d M Y, h:i A') : 'N/A' }}</td>
                     <td class="text-end no-print">
                         <a href="{{ route('reports.stb-history', ['sort' => 'desc', 'search' => $row->barcode_number]) }}" class="btn btn-outline-primary btn-xs rounded-pill">
                             <i class="bi bi-clock-history me-1"></i> History
@@ -176,7 +174,7 @@
                     </td>
                 </tr>
                 @empty
-                <tr><td colspan="7" class="text-center text-muted py-4">No STB records found.</td></tr>
+                <tr><td colspan="6" class="text-center text-muted py-4">No STB records found.</td></tr>
                 @endforelse
             </tbody>
         </table>

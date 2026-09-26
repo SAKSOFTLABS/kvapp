@@ -204,7 +204,7 @@ class StbBoxReportController extends Controller
             $file = fopen('php://output', 'w');
 
             if ($tab === 'total_boxes') {
-                fputcsv($file, ['Barcode Number', 'Box Model', 'Cable Operator', 'Intake Status', 'Delivered Out Status', 'Remarks', 'Registered Date']);
+                fputcsv($file, ['Barcode Number', 'Box Model', 'Cable Operator', 'Intake Status', 'Delivered Out Status', 'Remarks']);
                 $boxes = SetTopBox::with(['boxModel', 'operator'])->get();
                 foreach ($boxes as $b) {
                     fputcsv($file, [
@@ -213,8 +213,7 @@ class StbBoxReportController extends Controller
                         $b->operator->operator_name ?? 'Unassigned',
                         $b->stb_status,
                         $b->isDelivered() ? 'Delivered Out' : 'In Store/Workshop',
-                        $b->remarks ?? '',
-                        $b->created_at ? $b->created_at->format('Y-m-d H:i:s') : ''
+                        $b->remarks ?? ''
                     ]);
                 }
             } elseif ($tab === 'model_wise') {
