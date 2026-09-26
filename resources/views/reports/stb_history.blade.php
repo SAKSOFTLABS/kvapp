@@ -6,7 +6,6 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h3 class="fw-extrabold mb-0 text-dark"><i class="bi bi-clock-history me-2 text-primary"></i> STB Box Full History Report</h3>
-        <p class="text-muted small mb-0">Trace complete lifecycle events, repairs, spare parts used, check-ins, and check-outs by date & time.</p>
     </div>
     @if(isset($selectedBox) && $selectedBox)
     <div class="d-flex gap-2">
@@ -42,7 +41,6 @@
                     <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
                 </a>
             </div>
-            <div class="form-text small mt-1"><i class="bi bi-info-circle me-1"></i> Point laser barcode scanner at STB labels or type barcode number to inspect full lifecycle history.</div>
         </div>
     </form>
 </div>
