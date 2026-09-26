@@ -256,7 +256,7 @@
                     <a href="#reportsSubmenu" data-bs-toggle="collapse" class="nav-link-custom d-flex align-items-center justify-content-between {{ request()->routeIs('reports.*') ? 'active' : '' }}" aria-expanded="{{ request()->routeIs('reports.*') ? 'true' : 'false' }}">
                         <div class="d-flex align-items-center gap-2">
                             <i class="bi bi-file-earmark-bar-graph-fill text-primary"></i>
-                            <span>Reports</span>
+                            <span>Report</span>
                         </div>
                         <i class="bi bi-chevron-down small transition-transform"></i>
                     </a>
@@ -270,8 +270,12 @@
                                 <i class="bi bi-tools text-warning me-2"></i>
                                 <span>Service Report</span>
                             </a>
-                            <a href="{{ route('reports.stb-box') }}" class="nav-link-sub {{ (request()->routeIs('reports.stb-history*') || request()->routeIs('reports.stb-box*')) ? 'active-sub' : '' }}">
+                            <a href="{{ route('reports.stb-history') }}" class="nav-link-sub {{ request()->routeIs('reports.stb-history*') ? 'active-sub' : '' }}">
                                 <i class="bi bi-clock-history text-info me-2"></i>
+                                <span>STB Box History</span>
+                            </a>
+                            <a href="{{ route('reports.stb-box') }}" class="nav-link-sub {{ request()->routeIs('reports.stb-box*') ? 'active-sub' : '' }}">
+                                <i class="bi bi-tv text-success me-2"></i>
                                 <span>STB BOX Report</span>
                             </a>
                         </div>

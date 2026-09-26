@@ -16,6 +16,7 @@ use App\Http\Controllers\ServiceSectionController;
 use App\Http\Controllers\QcCheckController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StbHistoryReportController;
+use App\Http\Controllers\StbBoxReportController;
 use App\Http\Controllers\GlobalSearchController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingController;
@@ -47,9 +48,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reports/service', [ReportController::class, 'index'])->name('reports.service');
     Route::get('/reports/export-csv', [ReportController::class, 'exportCsv'])->name('reports.export-csv');
     Route::get('/reports/stb-history', [StbHistoryReportController::class, 'index'])->name('reports.stb-history');
-    Route::get('/reports/stb-box', [StbHistoryReportController::class, 'index'])->name('reports.stb-box');
     Route::get('/reports/stb-history/export-csv', [StbHistoryReportController::class, 'exportCsv'])->name('reports.stb-history.export');
     Route::get('/reports/stb-history/{id}/print', [StbHistoryReportController::class, 'printReport'])->name('reports.stb-history.print');
+    Route::get('/reports/stb-box', [StbBoxReportController::class, 'index'])->name('reports.stb-box');
+    Route::get('/reports/stb-box/export-csv', [StbBoxReportController::class, 'exportCsv'])->name('reports.stb-box.export');
 
     // STB Check-In Voucher Module (Admin, Front Office, Staff)
     Route::middleware(['role:admin,front_office,staff'])->group(function () {
