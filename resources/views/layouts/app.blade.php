@@ -17,6 +17,15 @@
     <!-- Custom Kerala Vision CSS with Cache Busting -->
     <link rel="stylesheet" href="{{ asset('css/kerala-vision.css') }}?v={{ time() }}">
 
+    @php
+        $appZoomLevel = \App\Models\Setting::get('app_zoom_level', '80%');
+    @endphp
+    <style>
+        html {
+            font-size: {{ $appZoomLevel }} !important;
+        }
+    </style>
+
     <!-- Inline Critical Mobile App CSS Override -->
     <style>
         @media (max-width: 991.98px) {
