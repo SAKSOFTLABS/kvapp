@@ -50,7 +50,7 @@
 
                 <div class="mb-3">
                     <label class="form-label fw-bold small">Voucher Remarks / Intake Batch Note</label>
-                    <input type="text" name="remarks" class="form-control form-control-kv" value="{{ old('remarks', $voucher->remarks) }}" placeholder="e.g. Batch intake of STB boxes brought by Suresh Kumar for servicing.">
+                    <input type="text" name="remarks" class="form-control form-control-kv" value="{{ old('remarks', $voucher->remarks) }}">
                 </div>
 
                 <!-- Barcode Scan Field -->

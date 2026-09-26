@@ -48,7 +48,7 @@
 
                 <div class="mb-3">
                     <label class="form-label fw-bold small">Voucher Remarks / Intake Batch Note</label>
-                    <input type="text" name="remarks" class="form-control form-control-kv" placeholder="e.g. Batch intake of STB boxes brought by Suresh Kumar for servicing.">
+                    <input type="text" name="remarks" class="form-control form-control-kv">
                 </div>
 
                 <!-- Barcode Scan Field -->
@@ -63,7 +63,6 @@
                             <i class="bi bi-plus-lg me-1"></i> Add to Voucher
                         </button>
                     </div>
-                    <div class="form-text small"><i class="bi bi-info-circle me-1"></i> Point laser barcode scanner at STB labels. Items will automatically add into the grid below.</div>
                 </div>
 
                 <!-- Live Status Alert Box -->
