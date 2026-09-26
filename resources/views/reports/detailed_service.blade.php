@@ -132,7 +132,6 @@
                 <th>Cable Operator</th>
                 <th>Assigned Technician</th>
                 <th>Service Action / Status</th>
-                <th>Spare Parts Used</th>
                 <th>Total Cost</th>
                 <th class="text-end no-print">Action</th>
             </tr>
@@ -173,19 +172,6 @@
                         <span class="badge bg-success text-white"><i class="bi bi-check-circle-fill me-1"></i> Service Done (Repaired)</span>
                     @endif
                 </td>
-                <td>
-                    @if($srv->items && $srv->items->count() > 0)
-                        <div class="d-flex flex-wrap gap-1">
-                            @foreach($srv->items as $si)
-                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
-                                    {{ $si->item->item_name ?? 'Part' }} x {{ (float)$si->quantity }}
-                                </span>
-                            @endforeach
-                        </div>
-                    @else
-                        <span class="text-muted small">None (0 Parts)</span>
-                    @endif
-                </td>
                 <td class="fw-bold text-success">
                     ₹{{ number_format($srv->total_cost, 2) }}
                 </td>
@@ -198,7 +184,7 @@
                 </td>
             </tr>
             @empty
-            <tr><td colspan="9" class="text-center text-muted py-4">No detailed service records found matching filters.</td></tr>
+            <tr><td colspan="8" class="text-center text-muted py-4">No detailed service records found matching filters.</td></tr>
             @endforelse
         </tbody>
     </table>

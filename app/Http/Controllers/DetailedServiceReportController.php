@@ -224,7 +224,6 @@ class DetailedServiceReportController extends Controller
                 'Cable Operator',
                 'Assigned Technician',
                 'Repair Result / Status',
-                'Spare Parts Used',
                 'Total Cost (INR)',
                 'Remarks'
             ]);
@@ -239,16 +238,6 @@ class DetailedServiceReportController extends Controller
                     $actionResult = 'Software Issue (Dead Box)';
                 }
 
-                $partsList = [];
-                if ($s->items && $s->items->count() > 0) {
-                    foreach ($s->items as $pi) {
-                        $pName = $pi->item->item_name ?? 'Part';
-                        $pQty = (float)$pi->quantity;
-                        $partsList[] = "{$pName} (x{$pQty})";
-                    }
-                }
-                $partsStr = count($partsList) > 0 ? implode(', ', $partsList) : 'None';
-
                 fputcsv($file, [
                     $s->service_code,
                     Carbon::parse($s->service_date)->format('Y-m-d'),
@@ -257,7 +246,6 @@ class DetailedServiceReportController extends Controller
                     $s->setTopBox->operator->operator_name ?? 'Unassigned',
                     $s->technician->name ?? 'N/A',
                     $actionResult,
-                    $partsStr,
                     number_format($s->total_cost, 2),
                     $s->remarks ?? ''
                 ]);
