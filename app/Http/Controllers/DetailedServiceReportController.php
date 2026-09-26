@@ -115,6 +115,41 @@ class DetailedServiceReportController extends Controller
 
         $totalCostSum = $allMatchingServices->sum('total_cost');
 
+        $staffPerformance = [];
+        foreach ($staffList as $st) {
+            $staffTxns = $allMatchingServices->where('staff_id', $st->id);
+            $stSoftware = $staffTxns->filter(function ($s) {
+                return str_contains($s->remarks ?? '', '[SOFTWARE ISSUE')
+                    || ($s->setTopBox && $s->setTopBox->stb_status === 'software_issue');
+            })->count();
+
+            $stFlash = $staffTxns->filter(function ($s) {
+                return str_contains($s->remarks ?? '', '[FLASH')
+                    || ($s->setTopBox && $s->setTopBox->stb_status === 'flash');
+            })->count();
+
+            $stPud = $staffTxns->filter(function ($s) {
+                return str_contains($s->remarks ?? '', '[SENT TO PUD')
+                    || ($s->setTopBox && $s->setTopBox->stb_status === 'send_to_pud');
+            })->count();
+
+            $stRepaired = $staffTxns->filter(function ($s) {
+                return !str_contains($s->remarks ?? '', '[SENT TO PUD')
+                    && !str_contains($s->remarks ?? '', '[FLASH')
+                    && !str_contains($s->remarks ?? '', '[SOFTWARE ISSUE')
+                    && (!$s->setTopBox || !in_array($s->setTopBox->stb_status, ['send_to_pud', 'flash', 'software_issue']));
+            })->count();
+
+            $staffPerformance[] = [
+                'staff' => $st,
+                'total' => $staffTxns->count(),
+                'repaired' => $stRepaired,
+                'flash' => $stFlash,
+                'software_issue' => $stSoftware,
+                'pud' => $stPud,
+            ];
+        }
+
         $services = $query->orderBy('service_date', 'desc')
             ->orderBy('id', 'desc')
             ->paginate(25)
@@ -129,7 +164,8 @@ class DetailedServiceReportController extends Controller
             'pudCount',
             'flashCount',
             'softwareIssueCount',
-            'totalCostSum'
+            'totalCostSum',
+            'staffPerformance'
         ));
     }
 
@@ -327,6 +363,7 @@ class DetailedServiceReportController extends Controller
             $totals[$tech->id] = [
                 'repaired' => 0,
                 'flash' => 0,
+                'software_issue' => 0,
                 'reservice' => 0,
             ];
         }
@@ -342,15 +379,24 @@ class DetailedServiceReportController extends Controller
                 $matrix[$dStr] = [];
             }
             if (!isset($matrix[$dStr][$tId])) {
-                $matrix[$dStr][$tId] = ['repaired' => 0, 'flash' => 0];
+                $matrix[$dStr][$tId] = ['repaired' => 0, 'flash' => 0, 'software_issue' => 0];
             }
 
-            $isNonRepaired = str_contains($srv->remarks ?? '', '[SENT TO PUD')
-                || str_contains($srv->remarks ?? '', '[FLASH')
-                || str_contains($srv->remarks ?? '', '[SOFTWARE ISSUE')
-                || ($srv->setTopBox && in_array($srv->setTopBox->stb_status, ['send_to_pud', 'flash', 'software_issue']));
+            $isSoftwareIssue = str_contains($srv->remarks ?? '', '[SOFTWARE ISSUE')
+                || ($srv->setTopBox && $srv->setTopBox->stb_status === 'software_issue');
 
-            if ($isNonRepaired) {
+            $isFlash = str_contains($srv->remarks ?? '', '[FLASH')
+                || ($srv->setTopBox && $srv->setTopBox->stb_status === 'flash');
+
+            $isPud = str_contains($srv->remarks ?? '', '[SENT TO PUD')
+                || ($srv->setTopBox && $srv->setTopBox->stb_status === 'send_to_pud');
+
+            if ($isSoftwareIssue) {
+                $matrix[$dStr][$tId]['software_issue']++;
+                if (isset($totals[$tId])) {
+                    $totals[$tId]['software_issue']++;
+                }
+            } elseif ($isFlash || $isPud) {
                 $matrix[$dStr][$tId]['flash']++;
                 if (isset($totals[$tId])) {
                     $totals[$tId]['flash']++;

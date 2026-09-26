@@ -121,6 +121,42 @@
     </form>
 </div>
 
+@if(isset($staffPerformance) && count($staffPerformance) > 0)
+<!-- Staff Performance Breakdown Summary Table -->
+<div class="kv-card mb-4 p-3 no-print">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-people-fill text-primary me-2"></i> Service Staff Performance Breakdown</h6>
+        <span class="badge bg-secondary-subtle text-dark">Staff Box Count Matrix</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-sm table-hover table-bordered align-middle mb-0 text-center" style="font-size: 13px;">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-start">Technician / Staff Name</th>
+                    <th>Repaired / Done</th>
+                    <th>Flash Box</th>
+                    <th class="table-warning">Software Issue</th>
+                    <th>Send to PUD</th>
+                    <th>Total Processed</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($staffPerformance as $sp)
+                <tr>
+                    <td class="text-start fw-bold"><i class="bi bi-person me-1 text-secondary"></i> {{ $sp['staff']->name }}</td>
+                    <td><span class="badge bg-success-subtle text-success fw-bold fs-7">{{ $sp['repaired'] }}</span></td>
+                    <td><span class="badge bg-dark-subtle text-dark fw-bold fs-7">{{ $sp['flash'] }}</span></td>
+                    <td><span class="badge bg-warning text-dark fw-bold fs-7">{{ $sp['software_issue'] }}</span></td>
+                    <td><span class="badge bg-danger-subtle text-danger fw-bold fs-7">{{ $sp['pud'] }}</span></td>
+                    <td class="fw-extrabold text-primary fs-7">{{ $sp['total'] }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</div>
+@endif
+
 <!-- Detailed Service Data Table -->
 <div class="kv-table-wrapper">
     <table class="kv-table">

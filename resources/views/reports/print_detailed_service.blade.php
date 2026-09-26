@@ -137,13 +137,14 @@
             <tr>
                 <th rowspan="2" style="vertical-align: middle;">DATE</th>
                 @foreach($technicians as $tech)
-                <th colspan="2" style="font-size: 15px;">{{ $tech->name }}</th>
+                <th colspan="3" style="font-size: 14px;">{{ $tech->name }}</th>
                 @endforeach
             </tr>
             <tr>
                 @foreach($technicians as $tech)
-                <th style="width: 90px;">RE PAIRED</th>
-                <th style="width: 90px;">FLASH BOX</th>
+                <th style="width: 70px;">RE PAIRED</th>
+                <th style="width: 70px;">FLASH BOX</th>
+                <th style="width: 70px;">SW ISSUE</th>
                 @endforeach
             </tr>
         </thead>
@@ -155,14 +156,16 @@
                 @php
                     $rep = $matrix[$dStr][$tech->id]['repaired'] ?? 0;
                     $fls = $matrix[$dStr][$tech->id]['flash'] ?? 0;
+                    $swi = $matrix[$dStr][$tech->id]['software_issue'] ?? 0;
                 @endphp
                 <td>{{ $rep > 0 ? $rep : '' }}</td>
                 <td>{{ $fls > 0 ? $fls : '' }}</td>
+                <td>{{ $swi > 0 ? $swi : '' }}</td>
                 @endforeach
             </tr>
             @empty
             <tr>
-                <td colspan="{{ 1 + (count($technicians) * 2) }}" style="padding: 20px;">
+                <td colspan="{{ 1 + (count($technicians) * 3) }}" style="padding: 20px;">
                     No service transactions recorded in this selected period.
                 </td>
             </tr>
@@ -174,6 +177,7 @@
                 @foreach($technicians as $tech)
                 <td>{{ $totals[$tech->id]['repaired'] ?? 0 }}</td>
                 <td>{{ $totals[$tech->id]['flash'] ?? 0 }}</td>
+                <td>{{ $totals[$tech->id]['software_issue'] ?? 0 }}</td>
                 @endforeach
             </tr>
 
@@ -182,6 +186,7 @@
                 <td class="fw-bold">RE SERVICE</td>
                 @foreach($technicians as $tech)
                 <td>{{ ($totals[$tech->id]['reservice'] ?? 0) > 0 ? $totals[$tech->id]['reservice'] : '' }}</td>
+                <td></td>
                 <td></td>
                 @endforeach
             </tr>
@@ -195,15 +200,16 @@
                 @endphp
                 <td>{{ $netRepared }}</td>
                 <td>{{ $totals[$tech->id]['flash'] ?? 0 }}</td>
+                <td>{{ $totals[$tech->id]['software_issue'] ?? 0 }}</td>
                 @endforeach
             </tr>
         </tbody>
     </table>
 
-    <!-- Auxiliary Summary Tables at Bottom (Matching Uploaded Sheet) -->
+    <!-- Auxiliary Summary Tables at Bottom -->
     <div class="auxiliary-container">
         <!-- Left Box: Net Repaired Total Summary -->
-        <table class="aux-table" style="width: 300px;">
+        <table class="aux-table" style="width: 320px;">
             <thead>
                 <tr>
                     <th colspan="2" style="font-size: 13px;">SUMMARY OVERVIEW</th>
@@ -211,8 +217,8 @@
             </thead>
             <tbody>
                 <tr>
-                    <td class="fw-bold" style="text-align: left; padding: 10px 12px;">NET REPAIRED STBS</td>
-                    <td class="fw-bold" style="font-size: 14px; padding: 10px 12px;">
+                    <td class="fw-bold" style="text-align: left; padding: 8px 12px;">NET REPAIRED STBS</td>
+                    <td class="fw-bold" style="font-size: 14px; padding: 8px 12px;">
                         @php
                             $grandNetRepared = 0;
                             foreach($technicians as $tech) {
@@ -223,8 +229,8 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="fw-bold" style="text-align: left; padding: 10px 12px;">TOTAL FLASH / PUD STBS</td>
-                    <td class="fw-bold" style="font-size: 14px; padding: 10px 12px;">
+                    <td class="fw-bold" style="text-align: left; padding: 8px 12px;">TOTAL FLASH / PUD STBS</td>
+                    <td class="fw-bold" style="font-size: 14px; padding: 8px 12px;">
                         @php
                             $grandFlash = 0;
                             foreach($technicians as $tech) {
@@ -232,6 +238,18 @@
                             }
                         @endphp
                         {{ $grandFlash }}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="fw-bold" style="text-align: left; padding: 8px 12px;">TOTAL SOFTWARE ISSUE STBS</td>
+                    <td class="fw-bold" style="font-size: 14px; padding: 8px 12px;">
+                        @php
+                            $grandSoftware = 0;
+                            foreach($technicians as $tech) {
+                                $grandSoftware += ($totals[$tech->id]['software_issue'] ?? 0);
+                            }
+                        @endphp
+                        {{ $grandSoftware }}
                     </td>
                 </tr>
             </tbody>
