@@ -31,9 +31,9 @@ class ServiceSectionController extends Controller
 
         // If staff, restrict staff list to self
         if ($user->isStaff() && $user->staff_id) {
-            $staffList = Staff::where('id', $user->staff_id)->where('status', 'active')->get();
+            $staffList = Staff::where('id', $user->staff_id)->where('status', 'active')->where('designation', '!=', 'Front Office')->get();
         } else {
-            $staffList = Staff::where('status', 'active')->orderBy('name')->get();
+            $staffList = Staff::where('status', 'active')->where('designation', '!=', 'Front Office')->orderBy('name')->get();
         }
 
         $boxes = SetTopBox::with('operator')->where('status', 'active')->orderBy('box_name')->get();

@@ -14,7 +14,7 @@ class DetailedServiceReportController extends Controller
     public function index(Request $request)
     {
         $boxModels = BoxModel::where('status', 'active')->orderBy('model_name')->get();
-        $staffList = Staff::where('status', 'active')->orderBy('name')->get();
+        $staffList = Staff::where('status', 'active')->where('designation', '!=', 'Front Office')->orderBy('name')->get();
 
         $query = ServiceTransaction::with(['setTopBox.boxModel', 'setTopBox.operator', 'technician', 'items.item']);
 
@@ -267,7 +267,7 @@ class DetailedServiceReportController extends Controller
             $monthTitle = Carbon::parse($dateFrom)->format('d-m-Y') . ' to ' . Carbon::parse($dateTo)->format('d-m-Y');
         }
 
-        $staffQuery = Staff::where('status', 'active');
+        $staffQuery = Staff::where('status', 'active')->where('designation', '!=', 'Front Office');
         if ($request->filled('staff_id')) {
             $staffQuery->where('id', $request->staff_id);
         }

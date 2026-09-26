@@ -30,7 +30,7 @@ class ReportController extends Controller
             }
         }
 
-        $staffList = Staff::where('status', 'active')->orderBy('name')->get();
+        $staffList = Staff::where('status', 'active')->where('designation', '!=', 'Front Office')->orderBy('name')->get();
         $itemList = Item::where('status', 'active')->orderBy('item_name')->get();
         $boxes = SetTopBox::where('status', 'active')->orderBy('box_name')->get();
 
