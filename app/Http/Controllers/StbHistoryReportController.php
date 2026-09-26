@@ -16,7 +16,7 @@ class StbHistoryReportController extends Controller
 {
     public function index(Request $request)
     {
-        $search = trim($request->get('search', ''));
+        $search = trim($request->get('search', $request->get('barcode', '')));
         $stbId = $request->get('stb_id');
         $sortOrder = strtolower($request->get('sort', 'desc')) === 'asc' ? 'asc' : 'desc';
 

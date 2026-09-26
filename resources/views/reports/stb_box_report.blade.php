@@ -170,7 +170,7 @@
                     </td>
                     <td>{{ $row->created_at ? $row->created_at->format('d M Y, h:i A') : 'N/A' }}</td>
                     <td class="text-end no-print">
-                        <a href="{{ route('reports.stb-history', ['barcode' => $row->barcode_number]) }}" class="btn btn-outline-primary btn-xs rounded-pill">
+                        <a href="{{ route('reports.stb-history', ['sort' => 'desc', 'search' => $row->barcode_number]) }}" class="btn btn-outline-primary btn-xs rounded-pill">
                             <i class="bi bi-clock-history me-1"></i> History
                         </a>
                     </td>
@@ -270,7 +270,7 @@
                     <td>{{ $row->updated_at ? $row->updated_at->format('d M Y, h:i A') : 'N/A' }}</td>
                     <td class="small text-muted">{{ $row->remarks ?? '-' }}</td>
                     <td class="text-end no-print">
-                        <a href="{{ route('reports.stb-history', ['barcode' => $row->barcode_number]) }}" class="btn btn-outline-primary btn-xs rounded-pill">
+                        <a href="{{ route('reports.stb-history', ['sort' => 'desc', 'search' => $row->barcode_number]) }}" class="btn btn-outline-primary btn-xs rounded-pill">
                             <i class="bi bi-clock-history me-1"></i> History
                         </a>
                     </td>
