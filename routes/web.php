@@ -88,6 +88,8 @@ Route::middleware(['auth'])->group(function () {
     // QC Inspection Module (Admin, QC, Staff)
     Route::get('/transactions/qc-check', [QcCheckController::class, 'index'])->name('qc.index');
     Route::post('/transactions/qc-check', [QcCheckController::class, 'store'])->name('qc.store');
+    Route::put('/transactions/qc-check/{id}', [QcCheckController::class, 'update'])->name('qc.update');
+    Route::delete('/transactions/qc-check/{id}', [QcCheckController::class, 'destroy'])->name('qc.destroy');
 
     // Master Data & All Transactions (Accessible for Admin, Staff, and QC)
     Route::middleware(['role:admin,staff,qc'])->group(function () {

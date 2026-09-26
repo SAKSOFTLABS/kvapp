@@ -169,6 +169,7 @@
                             <th>QC Status</th>
                             <th>Inspector</th>
                             <th>Date</th>
+                            <th class="text-end text-nowrap" style="min-width: 120px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -199,10 +200,84 @@
                             </td>
                             <td>{{ $log->inspector->name ?? 'N/A' }}</td>
                             <td>{{ \Carbon\Carbon::parse($log->qc_date)->format('d M Y') }}</td>
+                            <td class="text-end text-nowrap">
+                                <div class="d-inline-flex align-items-center justify-content-end gap-1">
+                                    <button type="button" class="btn btn-sm btn-outline-primary rounded-3" data-bs-toggle="modal" data-bs-target="#editQcModal{{ $log->id }}" title="Edit QC Voucher">
+                                        <i class="bi bi-pencil-square me-1"></i> Edit
+                                    </button>
+                                    <form action="{{ route('qc.destroy', $log->id) }}" method="POST" class="d-inline m-0" onsubmit="return confirm('Are you sure you want to delete QC Voucher {{ $log->voucher_number }}? The STB will return to Pending QC list.');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-3" title="Delete QC Voucher">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
                         </tr>
+
+                        <!-- Edit QC Voucher Modal -->
+                        <div class="modal fade" id="editQcModal{{ $log->id }}" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
+                                    <form action="{{ route('qc.update', $log->id) }}" method="POST">
+                                        @csrf
+                                        @method('PUT')
+                                        
+                                        <div class="modal-header">
+                                            <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square text-primary me-2"></i> Edit QC Voucher #{{ $log->voucher_number }}</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body text-start">
+                                            <div class="p-3 bg-light rounded-3 mb-3 border">
+                                                <div class="row g-2 small">
+                                                    <div class="col-6"><strong>STB Barcode:</strong> <code>{{ $log->setTopBox->barcode_number ?? 'N/A' }}</code></div>
+                                                    <div class="col-6"><strong>Model:</strong> {{ $log->setTopBox->box_name ?? 'N/A' }}</div>
+                                                    <div class="col-6"><strong>QC Voucher #:</strong> <span class="fw-bold text-primary">{{ $log->voucher_number }}</span></div>
+                                                    <div class="col-6"><strong>Inspector:</strong> {{ $log->inspector->name ?? 'N/A' }}</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label fw-bold small">QC Test Result *</label>
+                                                <div class="d-flex flex-column gap-2">
+                                                    <div class="form-check p-3 border rounded-3 bg-success-subtle text-success">
+                                                        <input class="form-check-input ms-0 me-2" type="radio" name="qc_status" id="edit_qc_pass_{{ $log->id }}" value="tested_ok" {{ $log->qc_status === 'tested_ok' ? 'checked' : '' }}>
+                                                        <label class="form-check-label fw-bold" for="edit_qc_pass_{{ $log->id }}">
+                                                            <i class="bi bi-check-circle-fill me-1"></i> TESTED OK (Pass QC - Ready for Operator Return)
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check p-3 border rounded-3 bg-warning-subtle text-warning">
+                                                        <input class="form-check-input ms-0 me-2" type="radio" name="qc_status" id="edit_qc_fail_{{ $log->id }}" value="complaint" {{ $log->qc_status === 'complaint' ? 'checked' : '' }}>
+                                                        <label class="form-check-label fw-bold" for="edit_qc_fail_{{ $log->id }}">
+                                                            <i class="bi bi-arrow-counterclockwise me-1"></i> REJECT / RE-COMPLAINT (Return to Technician for Reservice)
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check p-3 border rounded-3 bg-danger-subtle text-danger">
+                                                        <input class="form-check-input ms-0 me-2" type="radio" name="qc_status" id="edit_qc_flash_{{ $log->id }}" value="flash" {{ $log->qc_status === 'flash' ? 'checked' : '' }}>
+                                                        <label class="form-check-label fw-bold" for="edit_qc_flash_{{ $log->id }}">
+                                                            <i class="bi bi-x-circle-fill me-1"></i> FLASH (Unrepairable Dead Box)
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label fw-bold small">QC Test Remarks / Inspection Notes</label>
+                                                <textarea name="remarks" class="form-control form-control-kv" rows="2" placeholder="e.g. Re-tested tuner, signal clear.">{{ $log->remarks }}</textarea>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer border-top-0">
+                                            <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-primary btn-kv-primary">Save Changes</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                         @empty
                         <tr>
-                            <td colspan="6" class="text-center text-muted py-4">No QC audit logs recorded yet.</td>
+                            <td colspan="7" class="text-center text-muted py-4">No QC audit logs recorded yet.</td>
                         </tr>
                         @endforelse
                     </tbody>

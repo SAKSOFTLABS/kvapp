@@ -94,6 +94,59 @@ class QcCheckController extends Controller
         return redirect()->route('qc.index')->with('success', "QC Voucher {$qc->voucher_number} recorded for STB {$stb->barcode_number}! New Status: {$statusLabel}");
     }
 
+    public function update(Request $request, $id)
+    {
+        if (Auth::user()->isFrontOfficeOnly()) {
+            return back()->with('error', 'Access denied: QC Testing module is restricted for Front Office staff.');
+        }
+
+        $qc = QcCheck::findOrFail($id);
+
+        $validated = $request->validate([
+            'qc_status' => 'required|in:tested_ok,complaint,flash',
+            'remarks' => 'nullable|string',
+        ]);
+
+        $qc->update([
+            'qc_status' => $validated['qc_status'],
+            'remarks' => $validated['remarks'] ?? null,
+        ]);
+
+        $stb = SetTopBox::find($qc->set_top_box_id);
+        if ($stb) {
+            $stb->stb_status = $validated['qc_status'];
+            $stb->save();
+        }
+
+        $statusLabel = $stb ? $stb->status_label : ucfirst(str_replace('_', ' ', $validated['qc_status']));
+        ActivityLogService::log('UPDATE_QC_INSPECTION', "Updated QC Voucher #{$qc->voucher_number} for Box '" . ($stb->barcode_number ?? 'N/A') . "'. New Result: {$statusLabel}");
+
+        return redirect()->route('qc.index')->with('success', "QC Voucher {$qc->voucher_number} updated successfully! New Status: {$statusLabel}");
+    }
+
+    public function destroy($id)
+    {
+        if (Auth::user()->isFrontOfficeOnly()) {
+            return back()->with('error', 'Access denied: QC Testing module is restricted for Front Office staff.');
+        }
+
+        $qc = QcCheck::findOrFail($id);
+        $stb = SetTopBox::find($qc->set_top_box_id);
+        $voucherNum = $qc->voucher_number;
+
+        $qc->delete();
+
+        if ($stb) {
+            // Revert STB status to 'service_done' so it returns to pending QC list
+            $stb->stb_status = 'service_done';
+            $stb->save();
+        }
+
+        ActivityLogService::log('DELETE_QC_INSPECTION', "Deleted QC Voucher #{$voucherNum}");
+
+        return redirect()->route('qc.index')->with('success', "QC Voucher {$voucherNum} deleted successfully! Box has been returned to Pending QC list.");
+    }
+
     private function generateVoucherNumber()
     {
         $datePrefix = 'QC-' . date('Ymd') . '-';
