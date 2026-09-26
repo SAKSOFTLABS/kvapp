@@ -11,60 +11,63 @@
 </div>
 
 <div class="row g-4">
-    <!-- Form Card -->
-    <div class="col-12 col-lg-5">
+    <!-- Full Width Purchase Entry Form Card -->
+    <div class="col-12">
         <div class="kv-card">
             <h5 class="fw-bold mb-3 border-bottom pb-2"><i class="bi bi-pencil-square text-primary me-2"></i> Purchase Entry</h5>
             <form action="{{ route('add-stock.store') }}" method="POST">
                 @csrf
-                <div class="mb-3">
-                    <label class="form-label fw-bold small">Purchase Date *</label>
-                    <input type="date" name="date" class="form-control form-control-kv" value="{{ date('Y-m-d') }}" required>
-                </div>
+                <div class="row g-3">
+                    <div class="col-12 col-md-3">
+                        <label class="form-label fw-bold small">Purchase Date *</label>
+                        <input type="date" name="date" class="form-control form-control-kv" value="{{ date('Y-m-d') }}" required>
+                    </div>
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold small">Select Item *</label>
-                    <select name="item_id" id="item_id" class="form-select form-select-kv" required>
-                        <option value="">-- Choose Item --</option>
-                        @foreach($items as $item)
-                        <option value="{{ $item->id }}" data-price="{{ $item->purchase_price }}">
-                            {{ $item->item_name }} ({{ $item->item_code }}) - Current Main Stock: {{ $item->main_stock_qty }}
-                        </option>
-                        @endforeach
-                    </select>
-                </div>
+                    <div class="col-12 col-md-5">
+                        <label class="form-label fw-bold small">Select Item *</label>
+                        <select name="item_id" id="item_id" class="form-select form-select-kv" required>
+                            <option value="">-- Choose Item --</option>
+                            @foreach($items as $item)
+                            <option value="{{ $item->id }}" data-price="{{ $item->purchase_price }}">
+                                {{ $item->item_name }} ({{ $item->item_code }}) - Current Main Stock: {{ $item->main_stock_qty }}
+                            </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                <div class="row g-2 mb-3">
-                    <div class="col-6">
-                        <label class="form-label fw-bold small">Purchase Quantity *</label>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label fw-bold small">Purchase Qty *</label>
                         <input type="number" step="0.01" name="quantity" class="form-control form-control-kv" placeholder="0.00" required>
                     </div>
-                    <div class="col-6">
-                        <label class="form-label fw-bold small">Purchase Price per Unit (₹) *</label>
+
+                    <div class="col-6 col-md-2">
+                        <label class="form-label fw-bold small">Price / Unit (₹) *</label>
                         <input type="number" step="0.01" name="purchase_price" id="purchase_price" class="form-control form-control-kv" placeholder="0.00" required>
                     </div>
-                </div>
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold small">Supplier Name (Optional)</label>
-                    <input type="text" name="supplier" class="form-control form-control-kv" placeholder="e.g. Broadband Supplies Pvt Ltd">
-                </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-bold small">Supplier Name (Optional)</label>
+                        <input type="text" name="supplier" class="form-control form-control-kv" placeholder="e.g. Broadband Supplies Pvt Ltd">
+                    </div>
 
-                <div class="mb-3">
-                    <label class="form-label fw-bold small">Remarks</label>
-                    <textarea name="remarks" class="form-control form-control-kv" rows="2" placeholder="Invoice reference number or note..."></textarea>
-                </div>
+                    <div class="col-12 col-md-6">
+                        <label class="form-label fw-bold small">Remarks / Invoice Note</label>
+                        <input type="text" name="remarks" class="form-control form-control-kv" placeholder="Invoice reference number or note...">
+                    </div>
 
-                <button type="submit" class="btn btn-kv-primary w-100 py-2 fs-6">
-                    <i class="bi bi-check-circle me-1"></i> Save & Increase Main Stock
-                </button>
+                    <div class="col-12 text-end mt-3">
+                        <button type="submit" class="btn btn-kv-primary px-4 py-2 fs-6 rounded-3">
+                            <i class="bi bi-check-circle me-1"></i> Save & Increase Main Stock
+                        </button>
+                    </div>
+                </div>
             </form>
         </div>
     </div>
 
-    <!-- History Table Card -->
-    <div class="col-12 col-lg-7">
-        <div class="kv-card h-100">
+    <!-- Full Width Recent Main Stock Purchases Table Card -->
+    <div class="col-12">
+        <div class="kv-card">
             <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
                 <h5 class="fw-bold m-0"><i class="bi bi-clock-history text-primary me-2"></i> Recent Main Stock Purchases</h5>
                 
