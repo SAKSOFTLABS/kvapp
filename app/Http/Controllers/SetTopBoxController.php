@@ -162,6 +162,7 @@ class SetTopBoxController extends Controller
                 'status_badge_class' => $box->status_badge_class,
                 'operator_name' => $box->operator ? $box->operator->operator_name : 'Unassigned',
                 'remarks' => $box->remarks,
+                'is_delivered' => $box->isDelivered(),
             ]
         ]);
     }

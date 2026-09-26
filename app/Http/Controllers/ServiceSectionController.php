@@ -87,8 +87,12 @@ class ServiceSectionController extends Controller
         ]);
 
         try {
+            $box = SetTopBox::findOrFail($validated['set_top_box_id']);
+            if ($box->isDelivered()) {
+                return back()->withInput()->with('error', 'BOX IS NOT CHECKED IN FROM FRONT OFFICE');
+            }
+
             $service = $this->stockService->recordService($validated, Auth::id());
-            $box = SetTopBox::find($validated['set_top_box_id']);
             $tech = Staff::find($validated['staff_id']);
 
             $actionText = ($validated['action_type'] === 'flash') ? 'FLASHED (Dead Box)' : 'SERVICED DONE';

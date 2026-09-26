@@ -296,6 +296,13 @@
             headers: { 'Accept': 'application/json' },
             success: function(res) {
                 if (res.success && res.found) {
+                    if (res.box.is_delivered) {
+                        alert('BOX IS NOT CHECKED IN FROM FRONT OFFICE');
+                        $('#selected_set_top_box_id').val('');
+                        $('#stbSummaryCard').addClass('d-none');
+                        $('#service_barcode_scan_input').val('').focus();
+                        return;
+                    }
                     $('#selected_set_top_box_id').val(res.box.id);
                     displayStbSummaryCard(res.box);
                     $('#service_barcode_scan_input').val('');

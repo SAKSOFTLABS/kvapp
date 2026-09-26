@@ -78,6 +78,7 @@ class StbCheckInController extends Controller
                     'stb_status' => $isReservice ? 'reservice' : $box->stb_status,
                     'status_label' => $statusLabel,
                     'status_badge_class' => $badgeClass,
+                    'is_delivered' => $box->isDelivered(),
                 ]
             ]);
         }
