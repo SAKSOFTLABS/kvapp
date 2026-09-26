@@ -47,6 +47,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/reports/service', [ReportController::class, 'index'])->name('reports.service');
     Route::get('/reports/export-csv', [ReportController::class, 'exportCsv'])->name('reports.export-csv');
     Route::get('/reports/stb-history', [StbHistoryReportController::class, 'index'])->name('reports.stb-history');
+    Route::get('/reports/stb-box', [StbHistoryReportController::class, 'index'])->name('reports.stb-box');
     Route::get('/reports/stb-history/export-csv', [StbHistoryReportController::class, 'exportCsv'])->name('reports.stb-history.export');
     Route::get('/reports/stb-history/{id}/print', [StbHistoryReportController::class, 'printReport'])->name('reports.stb-history.print');
 
