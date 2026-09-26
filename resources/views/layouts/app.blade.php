@@ -287,6 +287,10 @@
                                 <i class="bi bi-tv text-success me-2"></i>
                                 <span>STB BOX Report</span>
                             </a>
+                            <a href="{{ route('reports.detailed-service') }}" class="nav-link-sub {{ request()->routeIs('reports.detailed-service*') ? 'active-sub' : '' }}">
+                                <i class="bi bi-file-earmark-medical text-danger me-2"></i>
+                                <span>Detailed Service Report</span>
+                            </a>
                         </div>
                     </div>
                 </div>
