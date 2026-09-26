@@ -127,9 +127,19 @@
                         <div class="small text-muted"><i class="bi bi-person me-1"></i> {{ $event['user_name'] }}</div>
                     </td>
                     <td>
+                        @if(!empty($event['status_badge_class']))
+                        <span class="badge {{ $event['status_badge_class'] }} px-2.5 py-1 fw-bold fs-7">
+                            {{ $event['status'] ?? 'N/A' }}
+                        </span>
+                        @elseif(($event['status'] ?? '') === 'Complaint')
+                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning px-2.5 py-1 fw-bold fs-7">
+                            {{ $event['status'] }}
+                        </span>
+                        @else
                         <span class="badge bg-secondary-subtle text-dark border border-secondary px-2.5 py-1 fw-bold fs-7">
                             {{ $event['status'] ?? 'N/A' }}
                         </span>
+                        @endif
                     </td>
                     <td class="text-start">
                         <div class="d-flex align-items-center justify-content-between mb-1">

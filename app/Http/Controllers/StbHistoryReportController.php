@@ -100,7 +100,7 @@ class StbHistoryReportController extends Controller
             }
 
             // 3. Service & Repair Events with Spare Parts
-            $serviceTxns = ServiceTransaction::with(['technician', 'creator', 'items.item'])
+            $serviceTxns = ServiceTransaction::with(['technician', 'creator', 'items.item', 'setTopBox'])
                 ->where('set_top_box_id', $selectedBox->id)
                 ->get();
 
@@ -116,6 +116,20 @@ class StbHistoryReportController extends Controller
                     ];
                 }
 
+                $statusLabel = 'Completed';
+                $badgeClass = 'bg-success text-white';
+
+                if (str_contains($srv->remarks ?? '', '[SENT TO PUD') || ($srv->setTopBox && $srv->setTopBox->stb_status === 'send_to_pud')) {
+                    $statusLabel = 'Complaint (Send to PUD)';
+                    $badgeClass = 'bg-danger text-white';
+                } elseif (str_contains($srv->remarks ?? '', '[FLASH') || ($srv->setTopBox && $srv->setTopBox->stb_status === 'flash')) {
+                    $statusLabel = 'Flash (Dead Box)';
+                    $badgeClass = 'bg-dark text-white';
+                } elseif (str_contains($srv->remarks ?? '', '[SOFTWARE ISSUE') || ($srv->setTopBox && $srv->setTopBox->stb_status === 'software_issue')) {
+                    $statusLabel = 'Software Issue (Dead Box)';
+                    $badgeClass = 'bg-dark text-white';
+                }
+
                 $events[] = [
                     'event_type' => 'SERVICE',
                     'title' => 'Service & Repair',
@@ -124,7 +138,8 @@ class StbHistoryReportController extends Controller
                     'date_time' => $srv->created_at ?? Carbon::parse($srv->service_date),
                     'user_name' => $srv->technician->name ?? ($srv->creator->name ?? 'Technician'),
                     'operator_name' => 'Service Center',
-                    'status' => ucfirst(str_replace('_', ' ', $srv->status ?? 'completed')),
+                    'status' => $statusLabel,
+                    'status_badge_class' => $badgeClass,
                     'voucher_number' => $srv->service_code,
                     'details' => [
                         'Service Code' => $srv->service_code,
@@ -132,7 +147,7 @@ class StbHistoryReportController extends Controller
                         'Assigned Technician' => $srv->technician->name ?? 'Unassigned',
                         'Issues Reported' => $srv->problem_description ?? 'N/A',
                         'Action / Repair Done' => $srv->action_taken ?? 'N/A',
-                        'Work Status' => ucfirst(str_replace('_', ' ', $srv->status ?? 'completed')),
+                        'Work Status' => $statusLabel,
                         'Total Repair Cost' => '₹' . number_format($srv->total_cost, 2),
                         'Remarks' => $srv->remarks ?? 'N/A',
                     ],
@@ -278,7 +293,7 @@ class StbHistoryReportController extends Controller
             }
         }
 
-        $serviceTxns = ServiceTransaction::with(['technician', 'creator', 'items.item'])
+        $serviceTxns = ServiceTransaction::with(['technician', 'creator', 'items.item', 'setTopBox'])
             ->where('set_top_box_id', $selectedBox->id)
             ->get();
         foreach ($serviceTxns as $srv) {
@@ -292,6 +307,16 @@ class StbHistoryReportController extends Controller
                     'total_cost' => $item->total_cost,
                 ];
             }
+
+            $statusLabel = 'Completed';
+            if (str_contains($srv->remarks ?? '', '[SENT TO PUD') || ($srv->setTopBox && $srv->setTopBox->stb_status === 'send_to_pud')) {
+                $statusLabel = 'Complaint (Send to PUD)';
+            } elseif (str_contains($srv->remarks ?? '', '[FLASH') || ($srv->setTopBox && $srv->setTopBox->stb_status === 'flash')) {
+                $statusLabel = 'Flash (Dead Box)';
+            } elseif (str_contains($srv->remarks ?? '', '[SOFTWARE ISSUE') || ($srv->setTopBox && $srv->setTopBox->stb_status === 'software_issue')) {
+                $statusLabel = 'Software Issue (Dead Box)';
+            }
+
             $events[] = [
                 'event_type' => 'SERVICE',
                 'title' => "Service & Repair (#{$srv->service_code})",
@@ -303,6 +328,7 @@ class StbHistoryReportController extends Controller
                     'Technician' => $srv->technician->name ?? 'N/A',
                     'Problem' => $srv->problem_description ?? 'N/A',
                     'Action Done' => $srv->action_taken ?? 'N/A',
+                    'Work Status' => $statusLabel,
                     'Repair Cost' => '₹' . number_format($srv->total_cost, 2),
                 ],
                 'spare_parts' => $spareParts,

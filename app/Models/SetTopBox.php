@@ -84,7 +84,7 @@ class SetTopBox extends Model
             'tested_ok' => 'Tested OK (QC Passed)',
             'flash' => 'Flash (Dead Box)',
             'software_issue' => 'Software Issue (Dead Box)',
-            'send_to_pud' => 'Send to PUD (3rd Party Service)',
+            'send_to_pud' => 'Complaint (Send to PUD)',
             'send_to_pk' => 'Send to PK',
             'delivered' => 'Delivered (Out with Operator)',
             default => ucfirst(str_replace('_', ' ', $this->stb_status ?? 'complaint')),
