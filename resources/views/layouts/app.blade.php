@@ -621,7 +621,7 @@
             }
         });
 
-        // Global Select2 Initialization for Searchable Dropdowns
+        // Global Select2 Initialization for Searchable Dropdowns & Auto-Close Alerts after 10 sec
         $(document).ready(function() {
             $('.select2-searchable').select2({
                 theme: 'default',
@@ -629,6 +629,20 @@
                 placeholder: 'Type to search...',
                 allowClear: true
             });
+
+            // Automatically close top notification alerts after 10 seconds
+            setTimeout(function() {
+                $('.alert-dismissible').each(function() {
+                    try {
+                        let alertInstance = bootstrap.Alert.getOrCreateInstance(this);
+                        if (alertInstance) {
+                            alertInstance.close();
+                        }
+                    } catch (e) {
+                        $(this).fadeOut();
+                    }
+                });
+            }, 10000);
         });
     </script>
 
