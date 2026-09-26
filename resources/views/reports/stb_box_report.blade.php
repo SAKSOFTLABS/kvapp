@@ -169,7 +169,7 @@
                     </td>
                     <td class="text-end no-print">
                         <a href="{{ route('reports.stb-history', ['sort' => 'desc', 'search' => $row->barcode_number]) }}" class="btn btn-outline-primary btn-xs rounded-pill">
-                            <i class="bi bi-clock-history me-1"></i> History
+                            History
                         </a>
                     </td>
                 </tr>
@@ -269,7 +269,7 @@
                     <td class="small text-muted">{{ $row->remarks ?? '-' }}</td>
                     <td class="text-end no-print">
                         <a href="{{ route('reports.stb-history', ['sort' => 'desc', 'search' => $row->barcode_number]) }}" class="btn btn-outline-primary btn-xs rounded-pill">
-                            <i class="bi bi-clock-history me-1"></i> History
+                            History
                         </a>
                     </td>
                 </tr>
