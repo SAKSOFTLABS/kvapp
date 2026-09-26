@@ -79,7 +79,7 @@ class ServiceSectionController extends Controller
             'service_date' => 'required|date',
             'set_top_box_id' => 'required|exists:set_top_boxes,id',
             'staff_id' => 'required|exists:staff,id',
-            'action_type' => 'required|in:complete,flash',
+            'action_type' => 'required|in:complete,flash,software_issue,send_to_pud',
             'remarks' => 'nullable|string',
             'items' => 'nullable|array',
             'items.*.item_id' => 'nullable|exists:items,id',
@@ -95,12 +95,20 @@ class ServiceSectionController extends Controller
             $service = $this->stockService->recordService($validated, Auth::id());
             $tech = Staff::find($validated['staff_id']);
 
-            $actionText = ($validated['action_type'] === 'flash') ? 'FLASHED (Dead Box)' : 'SERVICED DONE';
+            $actionText = match ($validated['action_type']) {
+                'flash' => 'FLASHED (Hardware Dead Box)',
+                'software_issue' => 'SOFTWARE ISSUE (Software Dead Box)',
+                'send_to_pud' => 'SENT TO PUD (3rd Party Service)',
+                default => 'SERVICED DONE',
+            };
             ActivityLogService::log('RECORD_SERVICE', "{$actionText} STB Service {$service->service_code} for Box '{$box->barcode_number}' by Tech {$tech->name}");
 
-            $statusMsg = ($validated['action_type'] === 'flash') 
-                ? "Service recorded as FLASH (Dead Box)! Box barcode: {$box->barcode_number}"
-                : "Service recorded successfully! Box {$box->barcode_number} is set to Service Done (Awaiting QC).";
+            $statusMsg = match ($validated['action_type']) {
+                'flash' => "Service recorded as FLASH (Dead Box)! Box barcode: {$box->barcode_number}",
+                'software_issue' => "Service recorded as SOFTWARE ISSUE (Dead Box)! Box barcode: {$box->barcode_number}",
+                'send_to_pud' => "Box {$box->barcode_number} marked as SENT TO PUD for 3rd Party Servicing!",
+                default => "Service recorded successfully! Box {$box->barcode_number} is set to Service Done (Awaiting QC).",
+            };
 
             return redirect()->route('service.index')->with('success', $statusMsg);
         } catch (Exception $e) {

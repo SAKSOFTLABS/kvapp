@@ -70,14 +70,14 @@ class StbCheckOutController extends Controller
             ]);
         }
 
-        // Rule 1: Allow QC passed items ('tested_ok') and Flash / Dead Boxes ('flash')
-        if (!in_array($box->stb_status, ['tested_ok', 'flash'])) {
+        // Rule 1: Allow QC passed items ('tested_ok') and Dead Boxes ('flash', 'software_issue')
+        if (!in_array($box->stb_status, ['tested_ok', 'flash', 'software_issue'])) {
             $statusText = $box->status_label;
             return response()->json([
                 'success' => true,
                 'found' => true,
                 'valid' => false,
-                'message' => "Cannot checkout STB {$barcode}! Current status is '{$statusText}'. Only QC Passed ('Tested OK') or Dead Boxes ('Flash') can be delivered."
+                'message' => "Cannot checkout STB {$barcode}! Current status is '{$statusText}'. Only QC Passed ('Tested OK') or Dead Boxes ('Flash' / 'Software Issue') can be delivered."
             ]);
         }
 
@@ -139,15 +139,15 @@ class StbCheckOutController extends Controller
             foreach ($validated['box_ids'] as $boxId) {
                 $box = SetTopBox::findOrFail($boxId);
                 
-                // Validate status (tested_ok or flash) and operator match again on server side
-                if (!in_array($box->stb_status, ['tested_ok', 'flash'])) {
-                    throw new Exception("Box {$box->barcode_number} is not in 'Tested OK' or 'Flash' status.");
+                // Validate status (tested_ok, flash, software_issue) and operator match again on server side
+                if (!in_array($box->stb_status, ['tested_ok', 'flash', 'software_issue'])) {
+                    throw new Exception("Box {$box->barcode_number} is not in 'Tested OK', 'Flash', or 'Software Issue' status.");
                 }
                 if ($box->operator_id != $operator->id) {
                     throw new Exception("Box {$box->barcode_number} does not belong to {$operator->operator_name}.");
                 }
 
-                $checkoutItemStatus = in_array($box->stb_status, ['tested_ok', 'flash']) ? $box->stb_status : 'tested_ok';
+                $checkoutItemStatus = in_array($box->stb_status, ['tested_ok', 'flash', 'software_issue']) ? $box->stb_status : 'tested_ok';
 
                 // Preserve STB Box status (do not overwrite to 'delivered')
                 $box->operator_id = $operator->id;

@@ -83,9 +83,11 @@ class SetTopBox extends Model
             'service_done' => 'Service Done',
             'tested_ok' => 'Tested OK (QC Passed)',
             'flash' => 'Flash (Dead Box)',
+            'software_issue' => 'Software Issue (Dead Box)',
+            'send_to_pud' => 'Send to PUD (3rd Party Service)',
             'send_to_pk' => 'Send to PK',
             'delivered' => 'Delivered (Out with Operator)',
-            default => ucfirst($this->stb_status ?? 'complaint'),
+            default => ucfirst(str_replace('_', ' ', $this->stb_status ?? 'complaint')),
         };
     }
 
@@ -101,6 +103,8 @@ class SetTopBox extends Model
             'service_done' => 'bg-primary-subtle text-primary border border-primary',
             'tested_ok' => 'bg-success-subtle text-success border border-success',
             'flash' => 'bg-danger-subtle text-danger border border-danger',
+            'software_issue' => 'bg-danger-subtle text-danger border border-danger fw-bold',
+            'send_to_pud' => 'bg-secondary-subtle text-dark border border-secondary fw-bold',
             'send_to_pk' => 'bg-dark-subtle text-dark border border-secondary',
             'delivered' => 'bg-info-subtle text-info border border-info fw-bold',
             default => 'bg-secondary-subtle text-secondary',

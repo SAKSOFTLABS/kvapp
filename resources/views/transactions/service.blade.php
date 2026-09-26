@@ -117,12 +117,18 @@
                 <!-- Section 4: Service Action Buttons (Placed After Grid & Dynamic Labels) -->
                 <div class="p-3 bg-light rounded-3 border pt-4 border-top">
                     <label class="form-label fw-bold small text-muted d-block mb-2 text-uppercase">Select Service Action to Finalize *</label>
-                    <div class="d-flex flex-wrap gap-3">
-                        <button type="submit" name="action_type" value="complete" id="btnCompleteAction" class="btn btn-success btn-kv-accent py-2.5 px-4 fs-6 fw-bold">
+                    <div class="d-flex flex-wrap gap-2">
+                        <button type="submit" name="action_type" value="complete" id="btnCompleteAction" class="btn btn-success btn-kv-accent py-2.5 px-3 fs-6 fw-bold">
                             <i class="bi bi-check-circle-fill me-2 fs-5"></i> Complete
                         </button>
-                        <button type="submit" name="action_type" value="flash" id="btnFlashAction" class="btn btn-danger py-2.5 px-4 fs-6 fw-bold rounded-3">
+                        <button type="submit" name="action_type" value="flash" id="btnFlashAction" class="btn btn-danger py-2.5 px-3 fs-6 fw-bold rounded-3">
                             <i class="bi bi-x-circle-fill me-2 fs-5"></i> Flash (Dead Box)
+                        </button>
+                        <button type="submit" name="action_type" value="software_issue" id="btnSoftwareAction" class="btn btn-warning py-2.5 px-3 fs-6 fw-bold rounded-3 text-dark">
+                            <i class="bi bi-laptop-fill me-2 fs-5"></i> Software Issue (Dead Box)
+                        </button>
+                        <button type="submit" name="action_type" value="send_to_pud" id="btnPudAction" class="btn btn-secondary py-2.5 px-3 fs-6 fw-bold rounded-3">
+                            <i class="bi bi-truck me-2 fs-5"></i> Send to PUD
                         </button>
                         <button type="button" class="btn btn-light rounded-3 ms-auto" onclick="resetForm()">
                             <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
@@ -183,6 +189,10 @@
                     <td>
                         @if($srv->setTopBox && $srv->setTopBox->stb_status === 'flash')
                             <span class="badge bg-danger-subtle text-danger rounded-pill px-3 py-1">Flashed (Dead Box)</span>
+                        @elseif($srv->setTopBox && $srv->setTopBox->stb_status === 'software_issue')
+                            <span class="badge bg-danger-subtle text-danger rounded-pill px-3 py-1"><i class="bi bi-laptop me-1"></i> Software Issue (Dead Box)</span>
+                        @elseif($srv->setTopBox && $srv->setTopBox->stb_status === 'send_to_pud')
+                            <span class="badge bg-secondary-subtle text-dark rounded-pill px-3 py-1"><i class="bi bi-truck me-1"></i> Sent to PUD</span>
                         @else
                             <span class="badge bg-success-subtle text-success rounded-pill px-3 py-1">Service Done (QC Pending)</span>
                         @endif
@@ -277,9 +287,13 @@
         if (hasParts) {
             $('#btnCompleteAction').html('<i class="bi bi-check-circle-fill me-2 fs-5"></i> Complete & Deduct Stock');
             $('#btnFlashAction').html('<i class="bi bi-x-circle-fill me-2 fs-5"></i> Flash & Deduct Stock (Dead Box)');
+            $('#btnSoftwareAction').html('<i class="bi bi-laptop-fill me-2 fs-5"></i> Software Issue & Deduct Stock');
+            $('#btnPudAction').html('<i class="bi bi-truck me-2 fs-5"></i> Send to PUD & Deduct Stock');
         } else {
             $('#btnCompleteAction').html('<i class="bi bi-check-circle-fill me-2 fs-5"></i> Complete');
             $('#btnFlashAction').html('<i class="bi bi-x-circle-fill me-2 fs-5"></i> Flash (Dead Box)');
+            $('#btnSoftwareAction').html('<i class="bi bi-laptop-fill me-2 fs-5"></i> Software Issue (Dead Box)');
+            $('#btnPudAction').html('<i class="bi bi-truck me-2 fs-5"></i> Send to PUD');
         }
     }
 

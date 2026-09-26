@@ -412,13 +412,20 @@ class StockManagementService
                 $totalCost += ($unitPrice * $reqQty);
             }
 
+            $remarksPrefix = match ($actionType) {
+                'flash' => '[FLASH - DEAD BOX] ',
+                'software_issue' => '[SOFTWARE ISSUE - DEAD BOX] ',
+                'send_to_pud' => '[SENT TO PUD SERVICE CENTER] ',
+                default => '',
+            };
+
             $serviceTx = ServiceTransaction::create([
                 'service_code' => $serviceCode,
                 'service_date' => $serviceDate,
                 'set_top_box_id' => $stbId,
                 'staff_id' => $staffId,
                 'total_cost' => $totalCost,
-                'remarks' => ($actionType === 'flash' ? '[FLASH - DEAD BOX] ' : '') . $remarks,
+                'remarks' => $remarksPrefix . $remarks,
                 'created_by' => $userId,
             ]);
 
@@ -444,8 +451,8 @@ class StockManagementService
             // Update Set Top Box status based on action_type
             $stb = SetTopBox::find($stbId);
             if ($stb) {
-                if ($actionType === 'flash') {
-                    $stb->stb_status = 'flash';
+                if (in_array($actionType, ['flash', 'software_issue', 'send_to_pud'])) {
+                    $stb->stb_status = $actionType;
                 } else {
                     $stb->stb_status = 'service_done';
                 }
@@ -471,7 +478,7 @@ class StockManagementService
 
             foreach ($boxes as $boxData) {
                 $stbId = $boxData['set_top_box_id'];
-                $actionType = $boxData['action_type'] ?? 'complete'; // 'complete' or 'flash'
+                $actionType = $boxData['action_type'] ?? 'complete'; // 'complete', 'flash', 'software_issue', 'send_to_pud'
                 $boxRemarks = $boxData['remarks'] ?? '';
                 $items = $boxData['items'] ?? [];
 
@@ -514,13 +521,20 @@ class StockManagementService
                 }
 
                 $combinedRemarks = trim($batchRemarks . ' ' . $boxRemarks);
+                $remarksPrefix = match ($actionType) {
+                    'flash' => '[FLASH - DEAD BOX] ',
+                    'software_issue' => '[SOFTWARE ISSUE - DEAD BOX] ',
+                    'send_to_pud' => '[SENT TO PUD SERVICE CENTER] ',
+                    default => '',
+                };
+
                 $serviceTx = ServiceTransaction::create([
                     'service_code' => $serviceCode,
                     'service_date' => $serviceDate,
                     'set_top_box_id' => $stbId,
                     'staff_id' => $staffId,
                     'total_cost' => $totalCost,
-                    'remarks' => ($actionType === 'flash' ? '[FLASH - DEAD BOX] ' : '') . $combinedRemarks,
+                    'remarks' => $remarksPrefix . $combinedRemarks,
                     'created_by' => $userId,
                 ]);
 
@@ -530,24 +544,24 @@ class StockManagementService
                     $reqQty = (float) $itemData['quantity'];
                     $unitPrice = (float) ($itemData['unit_price'] ?? 0);
 
-                StaffStock::where('staff_id', $staffId)
-                    ->where('item_id', $itemId)
-                    ->decrement('quantity', $reqQty);
+                    StaffStock::where('staff_id', $staffId)
+                        ->where('item_id', $itemId)
+                        ->decrement('quantity', $reqQty);
 
-                ServiceItem::create([
-                    'service_transaction_id' => $serviceTx->id,
-                    'item_id' => $itemId,
-                    'quantity' => $reqQty,
-                    'unit_price' => $unitPrice,
-                    'total_price' => $unitPrice * $reqQty,
-                ]);
-            }
+                    ServiceItem::create([
+                        'service_transaction_id' => $serviceTx->id,
+                        'item_id' => $itemId,
+                        'quantity' => $reqQty,
+                        'unit_price' => $unitPrice,
+                        'total_price' => $unitPrice * $reqQty,
+                    ]);
+                }
 
                 // Update Set Top Box status based on action_type
                 $stb = SetTopBox::find($stbId);
                 if ($stb) {
-                    if ($actionType === 'flash') {
-                        $stb->stb_status = 'flash';
+                    if (in_array($actionType, ['flash', 'software_issue', 'send_to_pud'])) {
+                        $stb->stb_status = $actionType;
                     } else {
                         $stb->stb_status = 'service_done';
                     }
