@@ -51,7 +51,6 @@
                             <i class="bi bi-search me-1"></i> Scan Barcode
                         </button>
                     </div>
-                    <div class="form-text small"><i class="bi bi-info-circle me-1"></i> Point barcode scanner at STB label to load box details.</div>
 
                     <!-- Hidden Input for Selected STB Box ID -->
                     <input type="hidden" name="set_top_box_id" id="selected_set_top_box_id" required>
@@ -80,7 +79,6 @@
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <div>
                             <h6 class="fw-bold m-0"><i class="bi bi-box-seam me-1 text-primary"></i> Spare Parts Used Grid</h6>
-                            <span class="text-muted small">Select spare parts used for servicing. No stock will be deducted if no parts are added.</span>
                         </div>
                         <button type="button" class="btn btn-sm btn-outline-primary rounded-3" id="btnAddSpareRow">
                             <i class="bi bi-plus-lg me-1"></i> Add Spare Part Row
