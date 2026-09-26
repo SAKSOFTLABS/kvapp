@@ -111,11 +111,11 @@
             display: flex !important;
             align-items: center !important;
             width: 100% !important;
-            padding: 0.38rem 0.65rem !important;
+            padding: 0.28rem 0.55rem !important;
             color: #64748b !important;
             text-decoration: none !important;
-            border-radius: 6px !important;
-            font-size: 0.81rem !important;
+            border-radius: 5px !important;
+            font-size: 0.75rem !important;
             font-weight: 500 !important;
             transition: all 0.2s ease !important;
         }
