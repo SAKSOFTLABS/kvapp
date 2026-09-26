@@ -40,6 +40,7 @@
                     <thead class="table-light">
                         <tr>
                             <th>Barcode & Model</th>
+                            <th>Service Ticket #</th>
                             <th>Operator</th>
                             <th>Last Serviced By</th>
                             <th class="text-end">QC Action</th>
@@ -52,6 +53,13 @@
                             <td>
                                 <div class="fw-bold text-dark"><i class="bi bi-upc-scan me-1 text-primary"></i> {{ $box->barcode_number }}</div>
                                 <div class="text-muted fs-8">{{ $box->box_name }}</div>
+                            </td>
+                            <td>
+                                @if($lastService && $lastService->service_code)
+                                    <span class="badge bg-light text-primary border fw-bold"><i class="bi bi-tools me-1"></i> {{ $lastService->service_code }}</span>
+                                @else
+                                    <span class="text-muted small">N/A</span>
+                                @endif
                             </td>
                             <td>
                                 @if($box->operator)
@@ -89,8 +97,9 @@
                                                 <div class="row g-2 small">
                                                     <div class="col-6"><strong>STB Barcode:</strong> <code>{{ $box->barcode_number }}</code></div>
                                                     <div class="col-6"><strong>Model:</strong> {{ $box->box_name }}</div>
+                                                    <div class="col-6"><strong>Service Ticket #:</strong> <span class="fw-bold text-primary">{{ $lastService->service_code ?? 'N/A' }}</span></div>
                                                     <div class="col-6"><strong>Operator:</strong> {{ $box->operator->operator_name ?? 'N/A' }}</div>
-                                                    <div class="col-6"><strong>Technician:</strong> {{ $lastService->technician->name ?? 'N/A' }}</div>
+                                                    <div class="col-12"><strong>Serviced Technician:</strong> {{ $lastService->technician->name ?? 'N/A' }}</div>
                                                 </div>
                                             </div>
 
@@ -133,7 +142,7 @@
                         </div>
                         @empty
                         <tr>
-                            <td colspan="4" class="text-center text-muted py-4"><i class="bi bi-check2-all fs-3 d-block mb-1 text-success opacity-50"></i> All serviced STBs have been tested and verified!</td>
+                            <td colspan="5" class="text-center text-muted py-4"><i class="bi bi-check2-all fs-3 d-block mb-1 text-success opacity-50"></i> All serviced STBs have been tested and verified!</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -154,7 +163,9 @@
                 <table class="table table-hover align-middle small mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th>STB Barcode</th>
+                            <th>QC Voucher #</th>
+                            <th>STB Barcode & Model</th>
+                            <th>Service Ticket #</th>
                             <th>QC Status</th>
                             <th>Inspector</th>
                             <th>Date</th>
@@ -164,8 +175,18 @@
                         @forelse($qcLogs as $log)
                         <tr>
                             <td>
-                                <div class="fw-bold">{{ $log->setTopBox->barcode_number ?? 'N/A' }}</div>
-                                <span class="text-muted fs-8">{{ $log->setTopBox->operator->operator_name ?? '' }}</span>
+                                <span class="fw-bold text-primary"><i class="bi bi-patch-check-fill me-1 text-success"></i> {{ $log->voucher_number }}</span>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">{{ $log->setTopBox->barcode_number ?? 'N/A' }}</div>
+                                <span class="text-muted fs-8">{{ $log->setTopBox->box_name ?? '' }} ({{ $log->setTopBox->operator->operator_name ?? 'Unassigned' }})</span>
+                            </td>
+                            <td>
+                                @if($log->serviceTransaction && $log->serviceTransaction->service_code)
+                                    <span class="badge bg-light text-dark border">{{ $log->serviceTransaction->service_code }}</span>
+                                @else
+                                    <span class="text-muted small">N/A</span>
+                                @endif
                             </td>
                             <td>
                                 @if($log->qc_status === 'tested_ok')
@@ -181,7 +202,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="text-center text-muted py-4">No QC audit logs recorded yet.</td>
+                            <td colspan="6" class="text-center text-muted py-4">No QC audit logs recorded yet.</td>
                         </tr>
                         @endforelse
                     </tbody>

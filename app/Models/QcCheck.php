@@ -12,6 +12,7 @@ class QcCheck extends Model
     protected $table = 'qc_checks';
 
     protected $fillable = [
+        'voucher_number',
         'set_top_box_id',
         'service_transaction_id',
         'qc_user_id',
@@ -19,6 +20,15 @@ class QcCheck extends Model
         'qc_date',
         'remarks',
     ];
+
+    public function getVoucherNumberAttribute($value): string
+    {
+        if (!empty($value)) {
+            return $value;
+        }
+        $dateStr = $this->qc_date ? \Carbon\Carbon::parse($this->qc_date)->format('Ymd') : ($this->created_at ? $this->created_at->format('Ymd') : date('Ymd'));
+        return 'QC-' . $dateStr . '-' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
+    }
 
     public function setTopBox()
     {

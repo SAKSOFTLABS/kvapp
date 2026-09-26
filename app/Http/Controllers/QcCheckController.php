@@ -33,9 +33,24 @@ class QcCheckController extends Controller
 
         $pendingBoxes = $pendingQuery->orderBy('updated_at', 'asc')->paginate(10, ['*'], 'pending_page')->withQueryString();
 
-        // Recent QC Inspections Log
-        $qcLogs = QcCheck::with(['setTopBox.operator', 'inspector', 'serviceTransaction'])
-            ->orderBy('created_at', 'desc')
+        $qcLogsQuery = QcCheck::with(['setTopBox.operator', 'inspector', 'serviceTransaction']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $qcLogsQuery->where(function ($q) use ($search) {
+                $q->where('voucher_number', 'like', "%{$search}%")
+                  ->orWhere('remarks', 'like', "%{$search}%")
+                  ->orWhereHas('setTopBox', function ($sq) use ($search) {
+                      $sq->where('barcode_number', 'like', "%{$search}%")
+                         ->orWhere('box_name', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('inspector', function ($iq) use ($search) {
+                      $iq->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $qcLogs = $qcLogsQuery->orderBy('created_at', 'desc')
             ->paginate(10, ['*'], 'log_page')
             ->withQueryString();
 
@@ -56,9 +71,11 @@ class QcCheckController extends Controller
         ]);
 
         $stb = SetTopBox::findOrFail($validated['set_top_box_id']);
+        $voucherNumber = $this->generateVoucherNumber();
 
         // Record QC check entry
         $qc = QcCheck::create([
+            'voucher_number' => $voucherNumber,
             'set_top_box_id' => $stb->id,
             'service_transaction_id' => $validated['service_transaction_id'] ?? null,
             'qc_user_id' => Auth::id(),
@@ -72,8 +89,26 @@ class QcCheckController extends Controller
         $stb->save();
 
         $statusLabel = $stb->status_label;
-        ActivityLogService::log('QC_INSPECTION', "QC Inspector performed check on Box '{$stb->barcode_number}'. Result: {$statusLabel}");
+        ActivityLogService::log('QC_INSPECTION', "QC Inspector performed check on Box '{$stb->barcode_number}' (Voucher #{$qc->voucher_number}). Result: {$statusLabel}");
 
-        return redirect()->route('qc.index')->with('success', "QC Check recorded for STB {$stb->barcode_number}! New Status: {$statusLabel}");
+        return redirect()->route('qc.index')->with('success', "QC Voucher {$qc->voucher_number} recorded for STB {$stb->barcode_number}! New Status: {$statusLabel}");
+    }
+
+    private function generateVoucherNumber()
+    {
+        $datePrefix = 'QC-' . date('Ymd') . '-';
+        $latest = QcCheck::where('voucher_number', 'like', $datePrefix . '%')
+            ->orderBy('id', 'desc')
+            ->first();
+
+        if ($latest && !empty($latest->voucher_number)) {
+            $num = (int) substr($latest->voucher_number, -4);
+            $next = str_pad($num + 1, 4, '0', STR_PAD_LEFT);
+        } else {
+            $countToday = QcCheck::whereDate('created_at', now()->toDateString())->count();
+            $next = str_pad($countToday + 1, 4, '0', STR_PAD_LEFT);
+        }
+
+        return $datePrefix . $next;
     }
 }

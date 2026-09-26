@@ -165,8 +165,9 @@ class StbHistoryReportController extends Controller
                     'user_name' => $qc->inspector->name ?? 'QC Inspector',
                     'operator_name' => 'QC Section',
                     'status' => $statusLabel,
-                    'voucher_number' => "QC-#{$qc->id}",
+                    'voucher_number' => $qc->voucher_number,
                     'details' => [
+                        'QC Voucher #' => $qc->voucher_number,
                         'QC Inspection Date' => Carbon::parse($qc->qc_date)->format('d M Y'),
                         'QC Inspector' => $qc->inspector->name ?? 'N/A',
                         'QC Status Result' => $statusLabel,
