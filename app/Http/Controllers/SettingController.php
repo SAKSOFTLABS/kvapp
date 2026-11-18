@@ -52,4 +52,20 @@ class SettingController extends Controller
 
         return redirect()->route('settings.index')->with('success', 'Settings updated successfully.');
     }
+
+    public function runMigrations()
+    {
+        if (!Auth::user()->isAdmin()) {
+            return redirect()->route('dashboard')->with('error', 'Access Restricted: Only Super Admin can run database migrations.');
+        }
+
+        try {
+            \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+            $output = \Illuminate\Support\Facades\Artisan::output();
+            ActivityLogService::log('DATABASE_MIGRATION', 'Super Admin ran database migrations: ' . trim($output));
+            return redirect()->back()->with('success', 'Database migrations executed successfully: ' . (empty(trim($output)) ? 'Database is already up to date.' : trim($output)));
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Database migration failed: ' . $e->getMessage());
+        }
+    }
 }

@@ -156,5 +156,7 @@ Route::middleware(['auth'])->group(function () {
         // Settings (Admin Only)
         Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
         Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+        Route::match(['get', 'post'], '/settings/migrate', [SettingController::class, 'runMigrations'])->name('settings.migrate');
+        Route::get('/admin/migrate', [SettingController::class, 'runMigrations'])->name('admin.migrate');
     });
 });

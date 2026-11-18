@@ -73,4 +73,21 @@
         </button>
     </form>
 </div>
+
+<div class="kv-card max-w-700 mt-4">
+    <h5 class="fw-bold mb-3 border-bottom pb-2 text-primary"><i class="bi bi-database-gear me-2"></i> Database & System Maintenance</h5>
+    <p class="text-muted small mb-3">
+        When new features or database schema updates are deployed to the server, click the button below to automatically execute pending database migrations.
+    </p>
+
+    <form action="{{ route('settings.migrate') }}" method="POST" onsubmit="return confirm('Execute all pending database migrations?');">
+        @csrf
+        <button type="submit" class="btn btn-outline-primary px-3 py-2">
+            <i class="bi bi-arrow-repeat me-1"></i> Run Database Migrations
+        </button>
+        <a href="{{ route('admin.migrate') }}" class="btn btn-link text-decoration-none text-muted small ms-2" target="_blank">
+            <i class="bi bi-box-arrow-up-right me-1"></i> Direct URL (/admin/migrate)
+        </a>
+    </form>
+</div>
 @endsection

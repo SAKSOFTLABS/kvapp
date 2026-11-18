@@ -7,14 +7,36 @@ use App\Models\QcCheck;
 use App\Services\ActivityLogService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
 
 class QcCheckController extends Controller
 {
+    /**
+     * Ensure the voucher_number column exists in qc_checks table
+     */
+    private function ensureVoucherNumberColumnExists(): bool
+    {
+        try {
+            if (!Schema::hasColumn('qc_checks', 'voucher_number')) {
+                Schema::table('qc_checks', function (Blueprint $table) {
+                    $table->string('voucher_number', 100)->nullable()->after('id');
+                });
+            }
+            return true;
+        } catch (\Throwable $e) {
+            // Silently catch in case the DB user lacks ALTER privilege
+            return false;
+        }
+    }
+
     public function index(Request $request)
     {
         if (Auth::user()->isFrontOfficeOnly()) {
             return redirect()->route('dashboard')->with('error', 'Access denied: QC Testing module is restricted for Front Office staff.');
         }
+
+        $this->ensureVoucherNumberColumnExists();
 
         // Pending QC Boxes (status = service_done)
         $pendingQuery = SetTopBox::with(['boxModel', 'operator', 'serviceHistory.technician'])
@@ -37,9 +59,12 @@ class QcCheckController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $qcLogsQuery->where(function ($q) use ($search) {
-                $q->where('voucher_number', 'like', "%{$search}%")
-                  ->orWhere('remarks', 'like', "%{$search}%")
+            $hasVoucherCol = Schema::hasColumn('qc_checks', 'voucher_number');
+            $qcLogsQuery->where(function ($q) use ($search, $hasVoucherCol) {
+                if ($hasVoucherCol) {
+                    $q->where('voucher_number', 'like', "%{$search}%");
+                }
+                $q->orWhere('remarks', 'like', "%{$search}%")
                   ->orWhereHas('setTopBox', function ($sq) use ($search) {
                       $sq->where('barcode_number', 'like', "%{$search}%")
                          ->orWhere('box_name', 'like', "%{$search}%");
@@ -63,6 +88,8 @@ class QcCheckController extends Controller
             return back()->with('error', 'Access denied: QC Testing module is restricted for Front Office staff.');
         }
 
+        $this->ensureVoucherNumberColumnExists();
+
         $validated = $request->validate([
             'set_top_box_id' => 'required|exists:set_top_boxes,id',
             'service_transaction_id' => 'nullable|exists:service_transactions,id',
@@ -73,25 +100,31 @@ class QcCheckController extends Controller
         $stb = SetTopBox::findOrFail($validated['set_top_box_id']);
         $voucherNumber = $this->generateVoucherNumber();
 
-        // Record QC check entry
-        $qc = QcCheck::create([
-            'voucher_number' => $voucherNumber,
+        $qcData = [
             'set_top_box_id' => $stb->id,
             'service_transaction_id' => $validated['service_transaction_id'] ?? null,
             'qc_user_id' => Auth::id(),
             'qc_status' => $validated['qc_status'],
             'qc_date' => now()->toDateString(),
             'remarks' => $validated['remarks'] ?? null,
-        ]);
+        ];
+
+        if (Schema::hasColumn('qc_checks', 'voucher_number')) {
+            $qcData['voucher_number'] = $voucherNumber;
+        }
+
+        // Record QC check entry
+        $qc = QcCheck::create($qcData);
 
         // Update STB status based on QC result
         $stb->stb_status = $validated['qc_status'];
         $stb->save();
 
         $statusLabel = $stb->status_label;
-        ActivityLogService::log('QC_INSPECTION', "QC Inspector performed check on Box '{$stb->barcode_number}' (Voucher #{$qc->voucher_number}). Result: {$statusLabel}");
+        $savedVoucherNumber = $qc->voucher_number ?? $voucherNumber;
+        ActivityLogService::log('QC_INSPECTION', "QC Inspector performed check on Box '{$stb->barcode_number}' (Voucher #{$savedVoucherNumber}). Result: {$statusLabel}");
 
-        return redirect()->route('qc.index')->with('success', "QC Voucher {$qc->voucher_number} recorded for STB {$stb->barcode_number}! New Status: {$statusLabel}");
+        return redirect()->route('qc.index')->with('success', "QC Voucher {$savedVoucherNumber} recorded for STB {$stb->barcode_number}! New Status: {$statusLabel}");
     }
 
     public function update(Request $request, $id)
@@ -149,18 +182,25 @@ class QcCheckController extends Controller
 
     private function generateVoucherNumber()
     {
-        $datePrefix = 'QC-' . date('Ymd') . '-';
-        $latest = QcCheck::where('voucher_number', 'like', $datePrefix . '%')
-            ->orderBy('id', 'desc')
-            ->first();
+        $this->ensureVoucherNumberColumnExists();
 
-        if ($latest && !empty($latest->voucher_number)) {
-            $num = (int) substr($latest->voucher_number, -4);
-            $next = str_pad($num + 1, 4, '0', STR_PAD_LEFT);
-        } else {
-            $countToday = QcCheck::whereDate('created_at', now()->toDateString())->count();
-            $next = str_pad($countToday + 1, 4, '0', STR_PAD_LEFT);
+        $datePrefix = 'QC-' . date('Ymd') . '-';
+        $hasColumn = Schema::hasColumn('qc_checks', 'voucher_number');
+
+        if ($hasColumn) {
+            $latest = QcCheck::where('voucher_number', 'like', $datePrefix . '%')
+                ->orderBy('id', 'desc')
+                ->first();
+
+            if ($latest && !empty($latest->voucher_number)) {
+                $num = (int) substr($latest->voucher_number, -4);
+                $next = str_pad($num + 1, 4, '0', STR_PAD_LEFT);
+                return $datePrefix . $next;
+            }
         }
+
+        $countToday = QcCheck::whereDate('created_at', now()->toDateString())->count();
+        $next = str_pad($countToday + 1, 4, '0', STR_PAD_LEFT);
 
         return $datePrefix . $next;
     }
