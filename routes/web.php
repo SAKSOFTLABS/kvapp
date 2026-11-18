@@ -68,6 +68,7 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/transactions/stb-checkin/{id}', [StbCheckInController::class, 'update'])->name('stb-checkin.update');
         Route::delete('/transactions/stb-checkin/{id}', [StbCheckInController::class, 'destroy'])->name('stb-checkin.destroy');
         Route::get('/transactions/stb-checkin/{id}/print', [StbCheckInController::class, 'printVoucher'])->name('stb-checkin.print');
+        Route::get('/transactions/stb-checkin/{id}/print-items', [StbCheckInController::class, 'printItems'])->name('stb-checkin.print-items');
     });
 
     // STB Delivery (Checkout) Voucher Module (Admin, Front Office, Staff)
@@ -80,6 +81,7 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/transactions/stb-checkout/{id}', [StbCheckOutController::class, 'update'])->name('stb-checkout.update');
         Route::delete('/transactions/stb-checkout/{id}', [StbCheckOutController::class, 'destroy'])->name('stb-checkout.destroy');
         Route::get('/transactions/stb-checkout/{id}/print', [StbCheckOutController::class, 'printVoucher'])->name('stb-checkout.print');
+        Route::get('/transactions/stb-checkout/{id}/print-items', [StbCheckOutController::class, 'printItems'])->name('stb-checkout.print-items');
     });
 
     // Service Section (Admin, Staff, QC)

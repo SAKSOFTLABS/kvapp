@@ -166,8 +166,11 @@
                         <a href="{{ route('stb-checkin.edit', $v->id) }}" class="btn btn-sm btn-outline-warning rounded-3 me-1">
                             <i class="bi bi-pencil me-1"></i> Edit
                         </a>
-                        <a href="{{ route('stb-checkin.print', $v->id) }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-3 me-1">
-                            <i class="bi bi-printer me-1"></i> Print
+                        <a href="{{ route('stb-checkin.print', $v->id) }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-3 me-1" title="Summary Print">
+                            <i class="bi bi-printer me-1"></i> Summary
+                        </a>
+                        <a href="{{ route('stb-checkin.print-items', $v->id) }}" target="_blank" class="btn btn-sm btn-outline-info rounded-3 me-1 text-dark" title="Item-Wise STB Details Print">
+                            <i class="bi bi-card-checklist me-1"></i> Items
                         </a>
                         <form action="{{ route('stb-checkin.destroy', $v->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete intake voucher {{ $v->voucher_number }}?');">
                             @csrf

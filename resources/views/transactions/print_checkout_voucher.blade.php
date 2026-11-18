@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>STB Delivery Receipt #{{ $voucher->voucher_number }} - Kerala Vision</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background: #fff; color: #1e293b; padding: 20px; }
         .receipt-card { border: 2px solid #0f172a; border-radius: 12px; padding: 25px; max-width: 800px; margin: 0 auto; }
@@ -19,11 +20,19 @@
     </style>
 </head>
 <body>
-    <div class="no-print text-center mb-4">
-        <button onclick="window.print()" class="btn btn-success px-4 py-2 fw-bold shadow-sm">
-            <i class="bi bi-printer me-1"></i> Print Delivery Receipt / Voucher
-        </button>
-        <button onclick="window.close()" class="btn btn-outline-secondary px-3 py-2 ms-2">Close Window</button>
+    <div class="no-print d-flex justify-content-between align-items-center mb-4 max-w-800 mx-auto" style="max-width: 800px;">
+        <div>
+            <span class="badge bg-secondary fs-7 me-2"><i class="bi bi-file-text me-1"></i> Summary Print</span>
+            <a href="{{ route('stb-checkout.print-items', $voucher->id) }}" class="btn btn-outline-success btn-sm me-2">
+                <i class="bi bi-card-checklist me-1"></i> Switch to Item-Wise Print
+            </a>
+        </div>
+        <div>
+            <button onclick="window.print()" class="btn btn-success px-3 py-2 fw-bold shadow-sm me-2">
+                <i class="bi bi-printer me-1"></i> Print Summary Receipt
+            </button>
+            <button onclick="window.close()" class="btn btn-outline-secondary px-3 py-2">Close</button>
+        </div>
     </div>
 
     <div class="receipt-card">

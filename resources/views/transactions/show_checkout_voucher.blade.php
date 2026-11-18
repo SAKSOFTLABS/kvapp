@@ -12,8 +12,11 @@
         <a href="{{ route('stb-checkout.index') }}" class="btn btn-outline-secondary btn-sm rounded-3">
             <i class="bi bi-arrow-left me-1"></i> Back to History
         </a>
-        <a href="{{ route('stb-checkout.print', $voucher->id) }}" target="_blank" class="btn btn-success btn-sm rounded-3">
-            <i class="bi bi-printer me-1"></i> Print Delivery Receipt
+        <a href="{{ route('stb-checkout.print', $voucher->id) }}" target="_blank" class="btn btn-outline-success btn-sm rounded-3">
+            <i class="bi bi-printer me-1"></i> Print Summary
+        </a>
+        <a href="{{ route('stb-checkout.print-items', $voucher->id) }}" target="_blank" class="btn btn-success btn-sm rounded-3">
+            <i class="bi bi-card-checklist me-1"></i> Print Item-Wise Details
         </a>
     </div>
 </div>

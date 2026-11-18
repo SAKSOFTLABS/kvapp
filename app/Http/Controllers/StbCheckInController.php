@@ -276,6 +276,12 @@ class StbCheckInController extends Controller
         return view('transactions.print_checkin_voucher', compact('voucher'));
     }
 
+    public function printItems($id)
+    {
+        $voucher = CheckinVoucher::with(['operator', 'creator', 'items.setTopBox.boxModel'])->findOrFail($id);
+        return view('transactions.print_checkin_items', compact('voucher'));
+    }
+
     private function checkReserviceStatus($boxId, $checkinDate)
     {
         $latestCheckoutDate = DB::table('checkout_voucher_items')

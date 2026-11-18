@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>STB Check-In Voucher {{ $voucher->voucher_number }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         body { font-family: system-ui, -apple-system, sans-serif; font-size: 13px; color: #1e293b; background: #fff; }
         .voucher-header { border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 16px; }
@@ -17,9 +18,17 @@
 </head>
 <body class="p-4" onload="window.print()">
 
-<div class="no-print mb-3 text-end">
-    <button onclick="window.print()" class="btn btn-primary btn-sm"><i class="bi bi-printer"></i> Print Voucher</button>
-    <button onclick="window.close()" class="btn btn-secondary btn-sm">Close</button>
+<div class="no-print mb-3 d-flex justify-content-between align-items-center border-bottom pb-2">
+    <div>
+        <span class="badge bg-secondary fs-7 me-2"><i class="bi bi-file-text me-1"></i> Summary Print</span>
+        <a href="{{ route('stb-checkin.print-items', $voucher->id) }}" class="btn btn-outline-primary btn-sm me-2">
+            <i class="bi bi-card-checklist me-1"></i> Switch to Item-Wise Print
+        </a>
+    </div>
+    <div>
+        <button onclick="window.print()" class="btn btn-primary btn-sm me-1"><i class="bi bi-printer me-1"></i> Print Summary</button>
+        <button onclick="window.close()" class="btn btn-secondary btn-sm">Close</button>
+    </div>
 </div>
 
 <div class="voucher-header d-flex justify-content-between align-items-center">

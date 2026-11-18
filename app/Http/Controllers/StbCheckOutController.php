@@ -269,6 +269,12 @@ class StbCheckOutController extends Controller
         return view('transactions.print_checkout_voucher', compact('voucher'));
     }
 
+    public function printItems($id)
+    {
+        $voucher = CheckoutVoucher::with(['operator', 'creator', 'items.setTopBox.boxModel'])->findOrFail($id);
+        return view('transactions.print_checkout_items', compact('voucher'));
+    }
+
     private function generateVoucherNumber()
     {
         $datePrefix = 'OUT-' . date('Ymd') . '-';
